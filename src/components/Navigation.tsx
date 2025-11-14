@@ -274,11 +274,11 @@ const Navigation = () => {
         {/* Mobile Navigation Overlay */}
         <div className={cn(
           "md:hidden fixed inset-0 top-16 bg-background/95 backdrop-blur-md transition-all duration-300 ease-out",
-          isMenuOpen 
-            ? "opacity-100 translate-y-0" 
+          isMenuOpen
+            ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-full pointer-events-none"
         )}>
-          <div className="container mx-auto px-4 py-6">
+          <div className="container mx-auto px-4 py-6 max-h-[calc(100vh-80px)] overflow-y-auto">
             <div className="space-y-1">
               {navItems.map((item, index) => (
                 <Link
