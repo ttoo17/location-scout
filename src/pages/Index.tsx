@@ -3,6 +3,7 @@ import { MapPin, Map } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import HeroSection from "../components/HeroSection";
 import LocationCard from "../components/LocationCard";
+import LocationCardSkeleton from "../components/LocationCardSkeleton";
 import SearchFilters from "../components/SearchFilters";
 import LocationMap from "../components/LocationMap";
 import { mockLocations } from "../data/mockData";
@@ -15,6 +16,7 @@ const Index = () => {
   const [currentLocation, setCurrentLocation] = useState("Metro Manila");
   const [viewMode, setViewMode] = useState<'locations' | 'images' | 'map'>('locations');
   const [showFilters, setShowFilters] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -24,6 +26,14 @@ const Index = () => {
       setSelectedFilters([tagParam]);
     }
   }, [searchParams]);
+
+  // Simulate loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFilterChange = (filters: string[]) => {
     setSelectedFilters(filters);
@@ -221,54 +231,78 @@ const Index = () => {
           {viewMode === 'locations' ? (
             // Location Cards Grid
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredLocations.map((location) => (
-                <LocationCard key={location.id} location={location} />
-              ))}
+              {isLoading ? (
+                // Show skeletons while loading
+                [...Array(8)].map((_, i) => (
+                  <LocationCardSkeleton key={`skeleton-${i}`} />
+                ))
+              ) : (
+                filteredLocations.map((location) => (
+                  <LocationCard key={location.id} location={location} />
+                ))
+              )}
             </div>
           ) : viewMode === 'images' ? (
             // Image Gallery Grid
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {filteredImages.map((imageData) => (
-                <div
-                  key={imageData.id}
-                  className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
-                  onClick={() => handleImageClick(imageData)}
-                >
-                  <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 mb-4 shadow-lg hover:shadow-2xl transition-all duration-300">
-                    <img
-                      src={imageData.image}
-                      alt={`${imageData.title} - Professional location photo`}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
+              {isLoading ? (
+                // Show skeleton images while loading
+                [...Array(10)].map((_, i) => (
+                  <div key={`image-skeleton-${i}`} className="group animate-pulse">
+                    <div className="aspect-square rounded-2xl overflow-hidden bg-gray-200 mb-4" />
+                    <div className="space-y-3">
+                      <div className="h-4 bg-gray-200 rounded w-3/4" />
+                      <div className="h-3 bg-gray-200 rounded w-1/2" />
+                      <div className="flex gap-2">
+                        <div className="h-5 bg-gray-200 rounded-full flex-1" />
+                        <div className="h-5 bg-gray-200 rounded-full flex-1" />
+                      </div>
+                    </div>
                   </div>
+                ))
+              ) : (
+                filteredImages.map((imageData) => (
+                  <div
+                    key={imageData.id}
+                    className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
+                    onClick={() => handleImageClick(imageData)}
+                  >
+                    <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 mb-4 shadow-lg hover:shadow-2xl transition-all duration-300">
+                      <img
+                        src={imageData.image}
+                        alt={`${imageData.title} - Professional location photo`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
                   
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                      {imageData.title}
-                    </h3>
-                    
-                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                      <MapPin className="h-3 w-3" />
-                      <span>{imageData.location.location}</span>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      {imageData.tags.slice(0, 2).map((tag, index) => (
-                        <button
-                          key={index}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTagClick(tag);
-                          }}
-                          className="px-3 py-1 bg-primary/10 backdrop-blur-sm text-primary text-xs rounded-full font-medium hover:bg-primary/20 transition-all duration-200 border border-primary/20 transform hover:scale-105"
-                        >
-                          {tag}
-                        </button>
-                      ))}
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                        {imageData.title}
+                      </h3>
+
+                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <MapPin className="h-3 w-3" />
+                        <span>{imageData.location.location}</span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {imageData.tags.slice(0, 2).map((tag, index) => (
+                          <button
+                            key={index}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTagClick(tag);
+                            }}
+                            className="px-3 py-1 bg-primary/10 backdrop-blur-sm text-primary text-xs rounded-full font-medium hover:bg-primary/20 transition-all duration-200 border border-primary/20 transform hover:scale-105"
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           ) : (
             // Map View

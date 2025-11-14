@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, MapPin, Star, MessageCircle, Calendar, Camera, Users, ArrowLeft, User, Phone, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ScoutSkeleton from "../components/ScoutSkeleton";
 
 interface LocationScout {
   id: string;
@@ -148,6 +149,15 @@ const LocationScouts = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const specialties = [
     "Manila Bay Sunsets", "Intramuros Heritage", "BGC Modern", "Banaue Rice Terraces", 
@@ -312,13 +322,19 @@ const LocationScouts = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900">
-            {filteredScouts.length} Filipino Location Scouts Available
+            {isLoading ? "Loading Filipino Location Scouts..." : `${filteredScouts.length} Filipino Location Scouts Available`}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {filteredScouts.map((scout) => (
-            <div key={scout.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-200">
+          {isLoading ? (
+            // Show skeletons while loading
+            [...Array(6)].map((_, i) => (
+              <ScoutSkeleton key={`scout-skeleton-${i}`} />
+            ))
+          ) : (
+            filteredScouts.map((scout) => (
+              <div key={scout.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-200">
               {/* Scout Header */}
               <div className="p-6 pb-4">
                 <div className="flex items-start gap-4">
@@ -430,7 +446,8 @@ const LocationScouts = () => {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

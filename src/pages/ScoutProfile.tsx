@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Star, MessageCircle, Calendar, Camera, Users, Clock, Award, Heart, Share2, Search, Filter } from "lucide-react";
 import { mockLocations } from "../data/mockData";
 import LocationCard from "../components/LocationCard";
+import LocationCardSkeleton from "../components/LocationCardSkeleton";
 import MessageModal from "../components/MessageModal";
 import BookingModal from "../components/BookingModal";
 
@@ -15,6 +16,15 @@ const ScoutProfile = () => {
   const [selectedBudget, setSelectedBudget] = useState("");
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Mock scout data - in real app this would come from API
   const scout = {
@@ -151,6 +161,7 @@ const ScoutProfile = () => {
       </div>
 
       {/* Cover Image & Profile */}
+      {!isLoading ? (
       <div className="relative">
         <div className="h-64 bg-gradient-to-r from-coral-500 to-orange-500">
           <img
@@ -160,7 +171,7 @@ const ScoutProfile = () => {
           />
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
-        
+
         <div className="container mx-auto px-4">
           <div className="relative -mt-16">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6">
@@ -169,7 +180,7 @@ const ScoutProfile = () => {
                 alt={scout.name}
                 className="w-32 h-32 rounded-2xl border-4 border-white shadow-xl object-cover"
               />
-              
+
               <div className="flex-1 bg-white rounded-2xl p-6 shadow-xl">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
@@ -193,16 +204,16 @@ const ScoutProfile = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       onClick={handleMessageClick}
                       className="bg-coral-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-coral-600 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
                     >
                       <MessageCircle className="h-4 w-4" />
                       Message
                     </button>
-                    <button 
+                    <button
                       onClick={handleBookingClick}
                       className="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-200 flex items-center gap-2"
                     >
@@ -216,6 +227,41 @@ const ScoutProfile = () => {
           </div>
         </div>
       </div>
+      ) : (
+        // Loading skeleton for profile
+        <div className="relative">
+          <div className="h-64 bg-gray-200 animate-pulse"></div>
+
+          <div className="container mx-auto px-4">
+            <div className="relative -mt-16">
+              <div className="flex flex-col md:flex-row items-start md:items-end gap-6">
+                <div className="w-32 h-32 rounded-2xl border-4 border-white shadow-xl bg-gray-200 animate-pulse"></div>
+
+                <div className="flex-1 bg-white rounded-2xl p-6 shadow-xl">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="h-8 bg-gray-200 rounded-lg mb-2 w-2/3 animate-pulse"></div>
+                      <div className="space-y-2 mb-4">
+                        <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-6 bg-gray-200 rounded-full w-20 animate-pulse"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-28 animate-pulse"></div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <div className="h-12 bg-gray-200 rounded-xl w-32 animate-pulse"></div>
+                      <div className="h-12 bg-gray-200 rounded-xl w-32 animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="container mx-auto px-4 py-12">
@@ -288,9 +334,16 @@ const ScoutProfile = () => {
 
               {/* Locations Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredLocations.map(location => (
-                  <LocationCard key={location.id} location={location} />
-                ))}
+                {isLoading ? (
+                  // Show skeletons while loading
+                  [...Array(4)].map((_, i) => (
+                    <LocationCardSkeleton key={`scout-profile-skeleton-${i}`} variant="list" />
+                  ))
+                ) : (
+                  filteredLocations.map(location => (
+                    <LocationCard key={location.id} location={location} />
+                  ))
+                )}
               </div>
 
               {filteredLocations.length === 0 && (
