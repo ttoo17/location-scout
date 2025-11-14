@@ -18,21 +18,101 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Initialize state from URL params on component mount
   useEffect(() => {
-    const tagParam = searchParams.get("tag");
-    if (tagParam && !selectedFilters.includes(tagParam)) {
-      setSelectedFilters([tagParam]);
+    const tagsParam = searchParams.get("tags");
+    const searchParam = searchParams.get("search");
+    const priceMinParam = searchParams.get("priceMin");
+    const priceMaxParam = searchParams.get("priceMax");
+    const locationParam = searchParams.get("location");
+    const viewParam = searchParams.get("view");
+
+    if (tagsParam) {
+      const filters = tagsParam.split(",").filter(tag => tag.trim());
+      setSelectedFilters(filters);
     }
-  }, [searchParams]);
+
+    if (searchParam) {
+      setSearchTerm(decodeURIComponent(searchParam));
+    }
+
+    if (priceMinParam && priceMaxParam) {
+      setPriceRange([parseInt(priceMinParam), parseInt(priceMaxParam)]);
+    }
+
+    if (locationParam) {
+      setCurrentLocation(decodeURIComponent(locationParam));
+    }
+
+    if (viewParam && (viewParam === 'locations' || viewParam === 'images' || viewParam === 'map')) {
+      setViewMode(viewParam);
+    }
+  }, []);
+
+  // Helper function to update all URL parameters
+  const updateUrlParams = (updates: Record<string, string | null>) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null) {
+        newSearchParams.delete(key);
+      } else {
+        newSearchParams.set(key, value);
+      }
+    });
+    setSearchParams(newSearchParams);
+  };
 
   const handleFilterChange = (filters: string[]) => {
     setSelectedFilters(filters);
-    
-    // Update URL to remove tag parameter if no filters are selected
+
+    // Update URL with new filters
     if (filters.length === 0) {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete("tag");
-      setSearchParams(newSearchParams);
+      updateUrlParams({ tags: null });
+    } else {
+      updateUrlParams({ tags: filters.join(",") });
+    }
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+
+    // Update URL with search term
+    if (term.trim() === "") {
+      updateUrlParams({ search: null });
+    } else {
+      updateUrlParams({ search: encodeURIComponent(term) });
+    }
+  };
+
+  const handlePriceChange = (range: number[]) => {
+    setPriceRange(range);
+
+    // Update URL with price range
+    updateUrlParams({
+      priceMin: range[0].toString(),
+      priceMax: range[1].toString(),
+    });
+  };
+
+  const handleLocationChange = (location: string) => {
+    setCurrentLocation(location);
+
+    // Update URL with location
+    if (location === "Metro Manila") {
+      updateUrlParams({ location: null });
+    } else {
+      updateUrlParams({ location: encodeURIComponent(location) });
+    }
+  };
+
+  const handleViewModeChange = (mode: 'locations' | 'images' | 'map') => {
+    setViewMode(mode);
+
+    // Update URL with view mode
+    if (mode === 'locations') {
+      updateUrlParams({ view: null });
+    } else {
+      updateUrlParams({ view: mode });
     }
   };
 
@@ -126,23 +206,21 @@ const Index = () => {
     if (!selectedFilters.includes(tag)) {
       const newFilters = [...selectedFilters, tag];
       setSelectedFilters(newFilters);
-      
-      // Update URL with the new tag
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set("tag", tag);
-      setSearchParams(newSearchParams);
+
+      // Update URL with the new tags
+      updateUrlParams({ tags: newFilters.join(",") });
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      <HeroSection 
+      <HeroSection
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={handleSearchChange}
         onFiltersClick={() => setShowFilters(!showFilters)}
         showFilters={showFilters}
       />
-      
+
       <div className="container mx-auto px-4 py-8">
         {/* Filters - Show/Hide based on state */}
         {showFilters && (
@@ -151,11 +229,11 @@ const Index = () => {
               selectedFilters={selectedFilters}
               onFilterChange={handleFilterChange}
               priceRange={priceRange}
-              onPriceChange={setPriceRange}
+              onPriceChange={handlePriceChange}
               currentLocation={currentLocation}
-              onLocationChange={setCurrentLocation}
+              onLocationChange={handleLocationChange}
               searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
+              onSearchChange={handleSearchChange}
             />
           </div>
         )}
@@ -170,30 +248,30 @@ const Index = () => {
             {/* Clean View Mode Toggle */}
             <div className="flex bg-white rounded-xl border border-gray-200 p-1 shadow-sm">
               <button
-                onClick={() => setViewMode('locations')}
+                onClick={() => handleViewModeChange('locations')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  viewMode === 'locations' 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                  viewMode === 'locations'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 Locations
               </button>
               <button
-                onClick={() => setViewMode('images')}
+                onClick={() => handleViewModeChange('images')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  viewMode === 'images' 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                  viewMode === 'images'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 Images
               </button>
               <button
-                onClick={() => setViewMode('map')}
+                onClick={() => handleViewModeChange('map')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                  viewMode === 'map' 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                  viewMode === 'map'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
@@ -278,7 +356,7 @@ const Index = () => {
           )}
 
           {/* No Results */}
-          {((viewMode === 'locations' && filteredLocations.length === 0) || 
+          {((viewMode === 'locations' && filteredLocations.length === 0) ||
             (viewMode === 'images' && filteredImages.length === 0)) && (
             <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-200">
               <div className="text-gray-500 text-lg mb-6">
@@ -291,8 +369,7 @@ const Index = () => {
                   setPriceRange([0, 50000]);
                   setCurrentLocation("Metro Manila");
                   setShowFilters(false);
-                  const newSearchParams = new URLSearchParams();
-                  setSearchParams(newSearchParams);
+                  setSearchParams(new URLSearchParams());
                 }}
                 className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-medium hover:bg-primary/90 transition-all duration-200 shadow-sm"
               >
