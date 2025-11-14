@@ -23,12 +23,12 @@ import { cn } from '@/lib/utils'
 interface Location {
   id: string
   title: string
-  heroImage: string
+  heroImage?: string
   price: number
   location: string
-  rating: number
-  reviews: number
-  metadata: {
+  rating?: number
+  reviews?: number
+  metadata?: {
     sizeM2: number
     powerAmps: number
     maxCrew: number
@@ -102,9 +102,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
   }, [bookingDuration, location.price])
 
   const crewSurcharge = useMemo(() => {
+    if (!location.metadata) return 0
     const extraCrew = Math.max(0, bookingDetails.crewSize - location.metadata.maxCrew)
     return extraCrew * 500 * bookingDuration // ₱500 per extra crew member per day
-  }, [bookingDetails.crewSize, location.metadata.maxCrew, bookingDuration])
+  }, [bookingDetails.crewSize, location.metadata, bookingDuration])
 
   const serviceFee = useMemo(() => {
     return Math.round((baseCost + crewSurcharge) * 0.1) // 10% service fee
@@ -244,27 +245,37 @@ const BookingModal: React.FC<BookingModalProps> = ({
       <Card>
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
-            <img
-              src={location.heroImage}
-              alt={location.title}
-              className="w-20 h-20 rounded-lg object-cover"
-            />
+            {location.heroImage && (
+              <img
+                src={location.heroImage}
+                alt={location.title}
+                className="w-20 h-20 rounded-lg object-cover"
+              />
+            )}
             <div className="flex-1">
               <h3 className="font-semibold text-lg line-clamp-1">{location.title}</h3>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                 <MapPin className="h-4 w-4" />
                 <span>{location.location}</span>
               </div>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 text-amber-400 fill-current" />
-                  <span className="text-sm font-medium">{location.rating}</span>
-                  <span className="text-sm text-muted-foreground">({location.reviews} reviews)</span>
+              {(location.rating !== undefined || location.reviews !== undefined) && (
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-1">
+                    {location.rating !== undefined && (
+                      <>
+                        <Star className="h-4 w-4 text-amber-400 fill-current" />
+                        <span className="text-sm font-medium">{location.rating}</span>
+                      </>
+                    )}
+                    {location.reviews !== undefined && (
+                      <span className="text-sm text-muted-foreground">({location.reviews} reviews)</span>
+                    )}
+                  </div>
                 </div>
-                <Badge variant="secondary" className="text-xs">
-                  ₱{location.price.toLocaleString()}/day
-                </Badge>
-              </div>
+              )}
+              <Badge variant="secondary" className="text-xs">
+                ₱{location.price.toLocaleString()}/day
+              </Badge>
             </div>
           </div>
         </CardContent>
@@ -343,7 +354,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           }))}
           className={errors.crewSize ? 'border-destructive' : ''}
         />
-        {bookingDetails.crewSize > location.metadata.maxCrew && (
+        {location.metadata && bookingDetails.crewSize > location.metadata.maxCrew && (
           <p className="text-sm text-amber-600">
             Additional crew surcharge applies (max capacity: {location.metadata.maxCrew})
           </p>
