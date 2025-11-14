@@ -52,33 +52,47 @@ interface BookingModalProps {
   onClose: () => void
   location: Location
   onBookingConfirm?: (booking: BookingDetails & { totalCost: number }) => void
+  unavailableDates?: Date[]
+  partiallyAvailableDates?: Date[]
 }
 
-// Mock availability data (in a real app, this would come from an API)
-const mockAvailability = {
-  unavailableDates: [
-    new Date(2024, 11, 15), // Dec 15
-    new Date(2024, 11, 16), // Dec 16
-    new Date(2024, 11, 25), // Dec 25
-    new Date(2024, 11, 26), // Dec 26
-    new Date(2025, 0, 1),   // Jan 1
-  ],
-  partiallyAvailable: [
-    new Date(2024, 11, 20), // Dec 20
-    new Date(2024, 11, 21), // Dec 21
-  ]
+// Generate default availability data based on current date (in a real app, this would come from an API)
+const getDefaultAvailability = () => {
+  const today = new Date()
+  return {
+    unavailableDates: [
+      addDays(today, 10), // 10 days from now
+      addDays(today, 11), // 11 days from now
+      addDays(today, 20), // 20 days from now
+      addDays(today, 21), // 21 days from now
+      addDays(today, 30), // 30 days from now
+    ],
+    partiallyAvailable: [
+      addDays(today, 15), // 15 days from now
+      addDays(today, 16), // 16 days from now
+    ]
+  }
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
   location,
-  onBookingConfirm
+  onBookingConfirm,
+  unavailableDates,
+  partiallyAvailableDates
 }) => {
   const [step, setStep] = useState<'booking' | 'confirmation' | 'success'>('booking')
   const [isLoading, setIsLoading] = useState(false)
   const [availabilityLoading, setAvailabilityLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Use provided dates or generate default ones
+  const defaultAvailability = useMemo(() => getDefaultAvailability(), [])
+  const availability = useMemo(() => ({
+    unavailableDates: unavailableDates ?? defaultAvailability.unavailableDates,
+    partiallyAvailable: partiallyAvailableDates ?? defaultAvailability.partiallyAvailable
+  }), [unavailableDates, partiallyAvailableDates, defaultAvailability])
   
   const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
     startDate: null,
@@ -116,13 +130,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   // Check date availability
   const isDateUnavailable = (date: Date) => {
-    return mockAvailability.unavailableDates.some(unavailableDate => 
+    return availability.unavailableDates.some(unavailableDate =>
       isSameDay(date, unavailableDate)
     )
   }
 
   const isDatePartiallyAvailable = (date: Date) => {
-    return mockAvailability.partiallyAvailable.some(partialDate => 
+    return availability.partiallyAvailable.some(partialDate =>
       isSameDay(date, partialDate)
     )
   }
