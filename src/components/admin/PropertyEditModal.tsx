@@ -17,10 +17,10 @@ interface PropertyEditModalProps {
   property: Property | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (propertyId: number, updates: Partial<Property>) => void;
-  onAddImage: (propertyId: number, imageData: Omit<PropertyImage, "id">) => void;
-  onUpdateImage: (propertyId: number, imageId: number, updates: Partial<PropertyImage>) => void;
-  onDeleteImage: (propertyId: number, imageId: number) => void;
+  onSave: (propertyId: string, updates: Partial<Property>) => void;
+  onAddImage: (propertyId: string, imageData: Omit<PropertyImage, "id">) => void;
+  onUpdateImage: (propertyId: string, imageId: string, updates: Partial<PropertyImage>) => void;
+  onDeleteImage: (propertyId: string, imageId: string) => void;
 }
 
 const PropertyEditModal = ({ property, isOpen, onClose, onSave, onAddImage, onUpdateImage, onDeleteImage }: PropertyEditModalProps) => {

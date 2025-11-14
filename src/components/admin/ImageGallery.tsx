@@ -13,11 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { PropertyImage } from "@/services/mockDataService";
 
 interface ImageGalleryProps {
-  propertyId: number;
+  propertyId: string;
   images: PropertyImage[];
-  onAddImage: (propertyId: number, imageData: Omit<PropertyImage, "id">) => void;
-  onUpdateImage: (propertyId: number, imageId: number, updates: Partial<PropertyImage>) => void;
-  onDeleteImage: (propertyId: number, imageId: number) => void;
+  onAddImage: (propertyId: string, imageData: Omit<PropertyImage, "id">) => void;
+  onUpdateImage: (propertyId: string, imageId: string, updates: Partial<PropertyImage>) => void;
+  onDeleteImage: (propertyId: string, imageId: string) => void;
 }
 
 const FILM_PHOTO_TAGS = [
@@ -70,7 +70,7 @@ const ImageGallery = ({ propertyId, images, onAddImage, onUpdateImage, onDeleteI
     toast({ title: "Image Updated", description: "Image has been updated successfully." });
   };
 
-  const handleDeleteImage = (imageId: number, imageTitle: string) => {
+  const handleDeleteImage = (imageId: string, imageTitle: string) => {
     onDeleteImage(propertyId, imageId);
     toast({ title: "Image Deleted", description: `"${imageTitle}" has been removed.`, variant: "destructive" });
   };

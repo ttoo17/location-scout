@@ -7,7 +7,7 @@ import { Calendar, User, MapPin, DollarSign, Check, X, MessageSquare } from "luc
 import { useToast } from "@/hooks/use-toast";
 
 interface Booking {
-  id: number;
+  id: string;
   propertyName: string;
   clientName: string;
   clientEmail: string;
@@ -22,7 +22,7 @@ const BookingManager = () => {
   const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([
     {
-      id: 1,
+      id: "1",
       propertyName: "Boracay Beach Resort",
       clientName: "John Smith",
       clientEmail: "john@example.com",
@@ -33,7 +33,7 @@ const BookingManager = () => {
       message: "Looking for romantic sunset shots for a wedding photoshoot."
     },
     {
-      id: 2,
+      id: "2",
       propertyName: "Baguio Mountain View",
       clientName: "Maria Garcia",
       clientEmail: "maria@filmstudio.com",
@@ -44,7 +44,7 @@ const BookingManager = () => {
       message: "Need location for dramatic mountain scenes in our upcoming film."
     },
     {
-      id: 3,
+      id: "3",
       propertyName: "Boracay Beach Resort",
       clientName: "David Lee",
       clientEmail: "david@agency.com",
@@ -55,9 +55,9 @@ const BookingManager = () => {
     }
   ]);
 
-  const handleBookingAction = (bookingId: number, action: "confirm" | "cancel") => {
-    setBookings(bookings.map(booking => 
-      booking.id === bookingId 
+  const handleBookingAction = (bookingId: string, action: "confirm" | "cancel") => {
+    setBookings(bookings.map(booking =>
+      booking.id === bookingId
         ? { ...booking, status: action === "confirm" ? "confirmed" : "cancelled" }
         : booking
     ));

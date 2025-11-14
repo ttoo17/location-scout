@@ -34,7 +34,7 @@ const ScoutDashboard = () => {
   const [sortBy, setSortBy] = useState("lastUpdated");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isAddLocationOpen, setIsAddLocationOpen] = useState(false);
-  const [selectedProperties, setSelectedProperties] = useState<number[]>([]);
+  const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const [quickFilters, setQuickFilters] = useState({
     highPerforming: false,
@@ -177,26 +177,26 @@ const ScoutDashboard = () => {
   }, [selectedProperties, paginatedProperties]);
 
   // Image Management Functions
-  const handleAddImage = (propertyId: number, imageData: Omit<PropertyImage, "id">) => {
+  const handleAddImage = (propertyId: string, imageData: Omit<PropertyImage, "id">) => {
     mockDataService.addImageToProperty(propertyId, imageData);
     setScoutProperties(mockDataService.getProperties());
     toast({ title: "Image Added", description: "Image has been added to the property." });
   };
 
-  const handleUpdateImage = (propertyId: number, imageId: number, updates: Partial<PropertyImage>) => {
+  const handleUpdateImage = (propertyId: string, imageId: string, updates: Partial<PropertyImage>) => {
     mockDataService.updatePropertyImage(propertyId, imageId, updates);
     setScoutProperties(mockDataService.getProperties());
     toast({ title: "Image Updated", description: "Image details have been updated." });
   };
 
-  const handleDeleteImage = (propertyId: number, imageId: number) => {
+  const handleDeleteImage = (propertyId: string, imageId: string) => {
     mockDataService.deletePropertyImage(propertyId, imageId);
     setScoutProperties(mockDataService.getProperties());
     toast({ title: "Image Deleted", description: "Image has been removed from the property." });
   };
 
   // Tag Management Functions
-  const handleAddTag = (propertyId: number, tag: string) => {
+  const handleAddTag = (propertyId: string, tag: string) => {
     if (!tag.trim()) return;
     setScoutProperties((properties) =>
       properties.map((p) =>
@@ -206,7 +206,7 @@ const ScoutDashboard = () => {
     toast({ title: "Tag Added", description: `Tag "${tag}" has been added.` });
   };
 
-  const handleDeleteTag = (propertyId: number, tagIndex: number) => {
+  const handleDeleteTag = (propertyId: string, tagIndex: number) => {
     setScoutProperties((properties) =>
       properties.map((p) =>
         p.id === propertyId ? { ...p, tags: p.tags.filter((_, index) => index !== tagIndex) } : p
@@ -215,7 +215,7 @@ const ScoutDashboard = () => {
     toast({ title: "Tag Deleted", description: "Tag has been removed." });
   };
 
-  const handleUpdateTag = (propertyId: number, tagIndex: number, newTag: string) => {
+  const handleUpdateTag = (propertyId: string, tagIndex: number, newTag: string) => {
     setScoutProperties((properties) =>
       properties.map((p) =>
         p.id === propertyId ? { ...p, tags: p.tags.map((tag, index) => (index === tagIndex ? newTag : tag)) } : p
@@ -240,7 +240,7 @@ const ScoutDashboard = () => {
       views: 0,
       revenue: "₱0",
       lastUpdated: new Date().toISOString().split('T')[0],
-      ownerId: 1, // Current scout ID
+      ownerId: "1", // Current scout ID
       images: [],
       features: [],
       tags: [],
@@ -271,17 +271,17 @@ const ScoutDashboard = () => {
     toast({ title: "Property Added", description: "Your new property has been added successfully." });
   };
 
-  const handleDeleteProperty = (propertyId: number) => {
+  const handleDeleteProperty = (propertyId: string) => {
     mockDataService.deleteProperty(propertyId);
     setScoutProperties(mockDataService.getProperties());
     toast({ title: "Property Deleted", description: "Property has been removed.", variant: "destructive" });
   };
 
-  const handleToggleStatus = (propertyId: number) => {
+  const handleToggleStatus = (propertyId: string) => {
     const property = mockDataService.getProperty(propertyId);
     if (property) {
-      mockDataService.updateProperty(propertyId, { 
-        status: property.status === "active" ? "inactive" : "active" 
+      mockDataService.updateProperty(propertyId, {
+        status: property.status === "active" ? "inactive" : "active"
       });
       setScoutProperties(mockDataService.getProperties());
       toast({ title: "Status Updated", description: "Property status has been changed." });
@@ -553,7 +553,7 @@ const ScoutDashboard = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveProperty = (propertyId: number, updates: Partial<Property>) => {
+  const handleSaveProperty = (propertyId: string, updates: Partial<Property>) => {
     mockDataService.updateProperty(propertyId, updates);
     setScoutProperties(mockDataService.getProperties());
     setIsEditModalOpen(false);

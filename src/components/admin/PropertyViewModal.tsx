@@ -12,9 +12,9 @@ interface PropertyViewModalProps {
   isOpen: boolean;
   onClose: () => void;
   onEdit: () => void;
-  onAddImage: (propertyId: number, imageData: Omit<PropertyImage, "id">) => void;
-  onUpdateImage: (propertyId: number, imageId: number, updates: Partial<PropertyImage>) => void;
-  onDeleteImage: (propertyId: number, imageId: number) => void;
+  onAddImage: (propertyId: string, imageData: Omit<PropertyImage, "id">) => void;
+  onUpdateImage: (propertyId: string, imageId: string, updates: Partial<PropertyImage>) => void;
+  onDeleteImage: (propertyId: string, imageId: string) => void;
 }
 
 const PropertyViewModal = ({ property, isOpen, onClose, onEdit, onAddImage, onUpdateImage, onDeleteImage }: PropertyViewModalProps) => {

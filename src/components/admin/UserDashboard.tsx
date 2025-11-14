@@ -21,20 +21,20 @@ const UserDashboard = () => {
 
   useEffect(() => {
     // Mock current user - in real app this would come from auth context
-    const user = mockDataService.getUser(1);
+    const user = mockDataService.getUser("1");
     if (user) {
       setCurrentUser(user);
-      setUserBookings(mockDataService.getBookingsByUser(1));
-      setSavedProperties(mockDataService.getUserSavedProperties(1));
+      setUserBookings(mockDataService.getBookingsByUser("1"));
+      setSavedProperties(mockDataService.getUserSavedProperties("1"));
     }
   }, []);
 
-  const toggleSaveProperty = (propertyId: number) => {
+  const toggleSaveProperty = (propertyId: string) => {
     const property = allProperties.find(p => p.id === propertyId);
     if (!property || !currentUser) return;
 
     const isSaved = mockDataService.isPropertySavedByUser(currentUser.id, propertyId);
-    
+
     if (isSaved) {
       mockDataService.unsavePropertyForUser(currentUser.id, propertyId);
       setSavedProperties(prev => prev.filter(p => p.id !== propertyId));
@@ -46,11 +46,11 @@ const UserDashboard = () => {
     }
   };
 
-  const handleViewProperty = (propertyId: number) => {
+  const handleViewProperty = (propertyId: string) => {
     navigate(`/location/${propertyId}`);
   };
 
-  const handleViewImages = (propertyId: number) => {
+  const handleViewImages = (propertyId: string) => {
     navigate(`/image/${propertyId}/0`);
   };
 

@@ -6,7 +6,7 @@ import mockMessages from '../data/mockMessages.json';
 import mockStats from '../data/mockStats.json';
 
 export interface Property {
-  id: number;
+  id: string;
   name: string;
   location: string;
   category: string;
@@ -18,7 +18,7 @@ export interface Property {
   lastUpdated: string;
   views: number;
   revenue: string;
-  ownerId: number;
+  ownerId: string;
   images: Image[];
   features: string[];
   tags: string[];
@@ -28,7 +28,7 @@ export interface Property {
 }
 
 export interface Image {
-  id: number;
+  id: string;
   url: string;
   title: string;
   description: string;
@@ -41,7 +41,7 @@ export interface Image {
 export type PropertyImage = Image;
 
 export interface Movie {
-  id: number;
+  id: string;
   title: string;
   year: string;
   role: string;
@@ -76,7 +76,7 @@ export interface Coordinates {
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   avatar: string;
@@ -84,7 +84,7 @@ export interface User {
   isVerified: boolean;
   profile: Profile;
   stats: Stats;
-  savedProperties: number[];
+  savedProperties: string[];
   role?: string;
   preferences?: any;
   scoutProfile?: any;
@@ -108,9 +108,9 @@ export interface Stats {
 }
 
 export interface Booking {
-  id: number;
-  propertyId: number;
-  userId: number;
+  id: string;
+  propertyId: string;
+  userId: string;
   startDate: string;
   endDate: string;
   totalDays: number;
@@ -119,10 +119,10 @@ export interface Booking {
 }
 
 export interface Message {
-  id: number;
-  senderId: number;
-  receiverId: number;
-  propertyId: number;
+  id: string;
+  senderId: string;
+  receiverId: string;
+  propertyId: string;
   timestamp: string;
   content: string;
 }
@@ -142,19 +142,20 @@ class MockDataService {
     // Load properties from JSON - ensure consistent ID types
     this.properties = mockProperties.map(property => ({
       ...property,
-      id: Number(property.id) // Ensure IDs are numbers
+      id: String(property.id), // Convert IDs to strings
+      ownerId: String(property.ownerId) // Convert owner ID to string
     }));
-    
+
     // Load users and normalize their data structure
     this.users = mockUsers.map((user: any) => ({
-      id: Number(user.id), // Ensure IDs are numbers
+      id: String(user.id), // Convert IDs to strings
       name: user.name,
       email: user.email,
       avatar: user.avatar,
       joinDate: user.joinDate,
       isVerified: user.isVerified,
       profile: user.profile,
-      savedProperties: (user.savedProperties || []).map((id: any) => Number(id)), // Ensure saved property IDs are numbers
+      savedProperties: (user.savedProperties || []).map((id: any) => String(id)), // Convert saved property IDs to strings
       role: user.role,
       preferences: user.preferences,
       scoutProfile: user.scoutProfile,
@@ -169,34 +170,36 @@ class MockDataService {
         responseRate: user.stats.responseRate
       }
     }));
-    
+
     // Ensure booking IDs are consistent
     this.bookings = mockBookings.map(booking => ({
       ...booking,
-      id: Number(booking.id),
-      propertyId: Number(booking.propertyId),
-      userId: Number(booking.userId)
+      id: String(booking.id), // Convert to string
+      propertyId: String(booking.propertyId), // Convert to string
+      userId: String(booking.userId) // Convert to string
     }));
-    
+
     // Transform messages to match our simple Message interface
-    this.messages = mockMessages.flatMap(conversation => 
+    this.messages = mockMessages.flatMap(conversation =>
       conversation.messages.map(msg => ({
-        id: Number(msg.id),
-        senderId: Number(msg.senderId),
-        receiverId: Number(msg.receiverId),
-        propertyId: Number(conversation.propertyId),
+        id: String(msg.id), // Convert to string
+        senderId: String(msg.senderId), // Convert to string
+        receiverId: String(msg.receiverId), // Convert to string
+        propertyId: String(conversation.propertyId), // Convert to string
         timestamp: msg.timestamp,
         content: msg.content
       }))
     );
-    
-    // Set next ID based on existing data
-    this.nextId = Math.max(
-      ...this.properties.map(p => p.id),
-      ...this.users.map(u => u.id),
-      ...this.bookings.map(b => b.id),
-      ...this.messages.map(m => m.id)
-    ) + 1;
+
+    // Set next ID based on existing data (convert string IDs back to numbers for incrementing)
+    const allIds = [
+      ...this.properties.map(p => parseInt(p.id)),
+      ...this.users.map(u => parseInt(u.id)),
+      ...this.bookings.map(b => parseInt(b.id)),
+      ...this.messages.map(m => parseInt(m.id))
+    ].filter(id => !isNaN(id));
+
+    this.nextId = (allIds.length > 0 ? Math.max(...allIds) : 0) + 1;
   }
 
   // Property methods
@@ -204,37 +207,37 @@ class MockDataService {
     return this.properties;
   }
 
-  getProperty(id: number): Property | undefined {
+  getProperty(id: string): Property | undefined {
     return this.properties.find(p => p.id === id);
   }
 
   addProperty(property: Omit<Property, 'id'>): Property {
-    const newProperty = { ...property, id: this.nextId++ };
+    const newProperty = { ...property, id: String(this.nextId++) };
     this.properties.push(newProperty);
     return newProperty;
   }
 
-  updateProperty(id: number, updates: Partial<Property>): void {
+  updateProperty(id: string, updates: Partial<Property>): void {
     const index = this.properties.findIndex(p => p.id === id);
     if (index !== -1) {
       this.properties[index] = { ...this.properties[index], ...updates };
     }
   }
 
-  deleteProperty(id: number): void {
+  deleteProperty(id: string): void {
     this.properties = this.properties.filter(p => p.id !== id);
   }
 
   // Image management methods
-  addImageToProperty(propertyId: number, imageData: Omit<Image, "id">): void {
+  addImageToProperty(propertyId: string, imageData: Omit<Image, "id">): void {
     const property = this.getProperty(propertyId);
     if (property) {
-      const newImage = { ...imageData, id: this.nextId++ };
+      const newImage = { ...imageData, id: String(this.nextId++) };
       property.images.push(newImage);
     }
   }
 
-  updatePropertyImage(propertyId: number, imageId: number, updates: Partial<Image>): void {
+  updatePropertyImage(propertyId: string, imageId: string, updates: Partial<Image>): void {
     const property = this.getProperty(propertyId);
     if (property) {
       const imageIndex = property.images.findIndex(img => img.id === imageId);
@@ -244,7 +247,7 @@ class MockDataService {
     }
   }
 
-  deletePropertyImage(propertyId: number, imageId: number): void {
+  deletePropertyImage(propertyId: string, imageId: string): void {
     const property = this.getProperty(propertyId);
     if (property) {
       property.images = property.images.filter(img => img.id !== imageId);
@@ -256,7 +259,7 @@ class MockDataService {
     return this.users;
   }
 
-  getUser(id: number): User | undefined {
+  getUser(id: string): User | undefined {
     return this.users.find(u => u.id === id);
   }
 
@@ -264,14 +267,14 @@ class MockDataService {
     this.users.push(user);
   }
 
-  updateUser(id: number, updatedUser: User): void {
+  updateUser(id: string, updatedUser: User): void {
     const index = this.users.findIndex(u => u.id === id);
     if (index !== -1) {
       this.users[index] = { ...this.users[index], ...updatedUser };
     }
   }
 
-  deleteUser(id: number): void {
+  deleteUser(id: string): void {
     this.users = this.users.filter(u => u.id !== id);
   }
 
@@ -280,11 +283,11 @@ class MockDataService {
     return this.bookings;
   }
 
-  getBooking(id: number): Booking | undefined {
+  getBooking(id: string): Booking | undefined {
     return this.bookings.find(b => b.id === id);
   }
 
-   getBookingsByUser(userId: number): Booking[] {
+   getBookingsByUser(userId: string): Booking[] {
     return this.bookings.filter(booking => booking.userId === userId);
   }
 
@@ -292,14 +295,14 @@ class MockDataService {
     this.bookings.push(booking);
   }
 
-  updateBooking(id: number, updatedBooking: Booking): void {
+  updateBooking(id: string, updatedBooking: Booking): void {
     const index = this.bookings.findIndex(b => b.id === id);
     if (index !== -1) {
       this.bookings[index] = { ...this.bookings[index], ...updatedBooking };
     }
   }
 
-  deleteBooking(id: number): void {
+  deleteBooking(id: string): void {
     this.bookings = this.bookings.filter(b => b.id !== id);
   }
 
@@ -308,7 +311,7 @@ class MockDataService {
     return this.messages;
   }
 
-  getMessage(id: number): Message | undefined {
+  getMessage(id: string): Message | undefined {
     return this.messages.find(m => m.id === id);
   }
 
@@ -316,19 +319,19 @@ class MockDataService {
     this.messages.push(message);
   }
 
-  updateMessage(id: number, updatedMessage: Message): void {
+  updateMessage(id: string, updatedMessage: Message): void {
     const index = this.messages.findIndex(m => m.id === id);
     if (index !== -1) {
       this.messages[index] = { ...this.messages[index], ...updatedMessage };
     }
   }
 
-  deleteMessage(id: number): void {
+  deleteMessage(id: string): void {
     this.messages = this.messages.filter(m => m.id !== id);
   }
 
   // User saved properties
-  getUserSavedProperties(userId: number): Property[] {
+  getUserSavedProperties(userId: string): Property[] {
     const user = this.getUser(userId);
     if (!user) return [];
 
@@ -338,7 +341,7 @@ class MockDataService {
     }).filter(Boolean);
   }
 
-  savePropertyForUser(userId: number, propertyId: number): void {
+  savePropertyForUser(userId: string, propertyId: string): void {
     const user = this.getUser(userId);
     if (!user) return;
 
@@ -347,14 +350,14 @@ class MockDataService {
     }
   }
 
-  unsavePropertyForUser(userId: number, propertyId: number): void {
+  unsavePropertyForUser(userId: string, propertyId: string): void {
     const user = this.getUser(userId);
     if (!user) return;
 
     user.savedProperties = user.savedProperties.filter(id => id !== propertyId);
   }
 
-  isPropertySavedByUser(userId: number, propertyId: number): boolean {
+  isPropertySavedByUser(userId: string, propertyId: string): boolean {
     const user = this.getUser(userId);
     if (!user) return false;
 
@@ -366,7 +369,7 @@ class MockDataService {
     return mockStats;
   }
 
-  getPropertyStats(propertyId: number): any {
+  getPropertyStats(propertyId: string): any {
     const property = this.getProperty(propertyId);
     if (!property) return null;
 

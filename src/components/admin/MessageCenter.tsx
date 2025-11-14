@@ -12,7 +12,7 @@ import { MessageSquare, Reply, User, Clock, Search, Filter, Mail, MailOpen, Chec
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
-  id: number;
+  id: string;
   from: string;
   email: string;
   subject: string;
@@ -35,14 +35,14 @@ const MessageCenter = () => {
   const [sortBy, setSortBy] = useState("timestamp");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   
-  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
-  const [selectedMessages, setSelectedMessages] = useState<number[]>([]);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
 
   // Mock data - in real app this would be much larger
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: 1,
+      id: "1",
       from: "Sarah Johnson",
       email: "sarah@photoagency.com",
       subject: "Inquiry about Boracay Beach Resort",
@@ -53,7 +53,7 @@ const MessageCenter = () => {
       priority: "high"
     },
     {
-      id: 2,
+      id: "2",
       from: "Mike Chen",
       email: "mike@filmcorp.com",
       subject: "Mountain Location for Film Project",
@@ -64,7 +64,7 @@ const MessageCenter = () => {
       priority: "medium"
     },
     {
-      id: 3,
+      id: "3",
       from: "Lisa Wong",
       email: "lisa@weddings.com",
       subject: "Wedding Photography Session",

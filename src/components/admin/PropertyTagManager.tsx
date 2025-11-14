@@ -7,11 +7,11 @@ import { Plus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface PropertyTagManagerProps {
-  propertyId: number;
+  propertyId: string;
   tags: string[];
-  onAddTag: (propertyId: number, tag: string) => void;
-  onDeleteTag: (propertyId: number, tagIndex: number) => void;
-  onUpdateTag: (propertyId: number, tagIndex: number, newTag: string) => void;
+  onAddTag: (propertyId: string, tag: string) => void;
+  onDeleteTag: (propertyId: string, tagIndex: number) => void;
+  onUpdateTag: (propertyId: string, tagIndex: number, newTag: string) => void;
 }
 
 const PropertyTagManager = ({ propertyId, tags, onAddTag, onDeleteTag, onUpdateTag }: PropertyTagManagerProps) => {
