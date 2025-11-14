@@ -234,6 +234,7 @@ const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
                     variant="ghost"
                     size="icon-sm"
                     onClick={() => removeFile(index)}
+                    aria-label={`Remove ${file.name}`}
                     className="text-muted-foreground hover:text-destructive"
                   >
                     <X className="w-4 h-4" />

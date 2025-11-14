@@ -195,6 +195,7 @@ const ModalContent = React.forwardRef<
                   variant="ghost"
                   size="sm"
                   onClick={handleFullscreenToggle}
+                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                   className="h-8 w-8 p-0 rounded-sm opacity-70 hover:opacity-100 transition-opacity"
                 >
                   {isFullscreen ? (
@@ -213,10 +214,11 @@ const ModalContent = React.forwardRef<
                   <Button
                     variant="ghost"
                     size="sm"
+                    aria-label="Close modal"
                     className="h-8 w-8 p-0 rounded-sm opacity-70 hover:opacity-100 transition-opacity focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   >
                     <X className="h-4 w-4" />
-                    <span className="sr-only">Close</span>
+                    <span className="sr-only">Close modal</span>
                   </Button>
                 </DialogPrimitive.Close>
               )}

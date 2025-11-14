@@ -203,6 +203,7 @@ const CarouselPrevious = React.forwardRef<
       ref={ref}
       variant={variant}
       size={size}
+      aria-label="Previous slide"
       className={cn(
         "absolute  h-8 w-8 rounded-full",
         orientation === "horizontal"
@@ -232,6 +233,7 @@ const CarouselNext = React.forwardRef<
       ref={ref}
       variant={variant}
       size={size}
+      aria-label="Next slide"
       className={cn(
         "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
