@@ -70,9 +70,9 @@ const mockLocations = [
 export function BookingModalExamples() {
   const [selectedLocation, setSelectedLocation] = useState<typeof mockLocations[0] | null>(null)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
-  const [bookingHistory, setBookingHistory] = useState<any[]>([])
+  const [bookingHistory, setBookingHistory] = useState<unknown[]>([])
 
-  const handleBookingConfirm = (booking: any) => {
+  const handleBookingConfirm = (booking: unknown) => {
     setBookingHistory(prev => [...prev, {
       ...booking,
       id: Date.now(),

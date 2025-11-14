@@ -64,7 +64,7 @@ const ScoutDashboard = () => {
 
   // Enhanced filtering with performance optimization
   const filteredAndSortedProperties = useMemo(() => {
-    let filtered = scoutProperties.filter(property => {
+    const filtered = scoutProperties.filter(property => {
       const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            property.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            property.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -96,8 +96,8 @@ const ScoutDashboard = () => {
 
     // Sorting
     filtered.sort((a, b) => {
-      let aValue: any = a[sortBy as keyof Property];
-      let bValue: any = b[sortBy as keyof Property];
+      let aValue: unknown = a[sortBy as keyof Property];
+      let bValue: unknown = b[sortBy as keyof Property];
       
       if (sortBy === "price") {
         aValue = parseFloat(String(aValue).replace(/[^\d]/g, ''));
@@ -158,6 +158,7 @@ const ScoutDashboard = () => {
         break;
     }
     setSelectedProperties([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProperties, toast]);
 
   const handleExport = useCallback(async () => {

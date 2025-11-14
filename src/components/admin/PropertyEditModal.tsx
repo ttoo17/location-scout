@@ -86,7 +86,7 @@ const PropertyEditModal = ({ property, isOpen, onClose, onSave, onAddImage, onUp
     }));
   };
 
-  const updateMetadata = (key: string, value: any) => {
+  const updateMetadata = (key: string, value: unknown) => {
     setFormData(prev => ({
       ...prev,
       metadata: {

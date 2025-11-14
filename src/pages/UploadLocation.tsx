@@ -36,7 +36,7 @@ const UploadLocation = () => {
     "Creative Space"
   ];
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

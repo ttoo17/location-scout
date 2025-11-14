@@ -1,0 +1,104 @@
+# Frontend Development Rules for Lovable/Vite React Projects
+
+## Project Structure
+- Tech Stack: Vite + React + TypeScript + Tailwind CSS + shadcn-ui
+- Build Tool: Vite
+- UI Components: shadcn-ui component library
+- Styling: Tailwind CSS with TypeScript support
+- Form Handling: React Hook Form + Zod validation
+- Routing: React Router v6+
+
+## Code Quality Standards
+
+### TypeScript
+- Enable strict type checking (noImplicitAny: true)
+- Use `unknown` instead of `any` where appropriate
+- Define proper interfaces for component props
+- Use proper generic types for useState, useCallback, etc.
+
+### React Best Practices
+- Follow React Hooks rules (dependencies, call order)
+- Use useCallback with proper dependency arrays
+- Use useMemo only when necessary (expensive computations)
+- Always add missing dependencies in hooks
+- Use React.memo for performance-critical components
+
+### Component Structure
+- Keep components focused and single-responsibility
+- Use forwardRef for components that need ref access
+- Implement proper TypeScript interfaces for all props
+- Use React.FC when appropriate (but not required in React 18+)
+
+### Styling
+- Use Tailwind CSS utility classes
+- Create variants using class-variance-authority (cva)
+- Avoid inline styles
+- Use CSS modules for component-scoped styles only when necessary
+- Maintain dark mode compatibility
+
+## File Organization
+
+### src/
+- `pages/`: Page components (main routes)
+- `components/`: Reusable React components
+  - `ui/`: UI component library
+  - `admin/`: Admin-specific components
+- `services/`: API calls and data services
+- `contexts/`: React Context providers
+- `hooks/`: Custom React hooks
+- `lib/`: Utilities and helpers
+- `styles/`: Global styles
+
+## Linting Rules
+- ESLint configuration enforces:
+  - No unused variables
+  - No unused functions
+  - React Hooks exhaustive dependencies
+  - No explicit `any` types (use `unknown` instead)
+  - Proper TypeScript usage
+
+## Build & Deployment
+- Build output: dist/
+- Build command: `npm run build`
+- Dev server: `npm run dev`
+- Linting: `npm run lint`
+- Testing: `npm run test`
+- Preview: `npm run preview`
+
+## Performance Guidelines
+- Implement code-splitting for large features
+- Use dynamic imports for route-based code splitting
+- Monitor bundle size (target: < 500 KB gzipped)
+- Optimize images and assets
+- Use React.lazy for component-level code splitting
+
+## Testing
+- Test file location: `src/**/__tests__/*.test.tsx`
+- Test framework: Vitest
+- Include unit tests for utilities and custom hooks
+- Include integration tests for components
+
+## API Integration
+- Use React Query (@tanstack/react-query) for data fetching
+- Create data services in src/services/
+- Handle loading, error, and success states
+- Mock data during development (mockDataService)
+
+## Environment Configuration
+- No hardcoded API endpoints
+- Use environment variables (if needed in future)
+- Mock data service for development
+- Create .env files for sensitive data (not in repo)
+
+## Dependencies Management
+- Keep dependencies minimal
+- Use shadcn-ui for UI components (pre-installed and styled)
+- Avoid duplicate dependencies
+- Regular security audits (npm audit)
+- Run `npm audit fix` for automatic vulnerability fixes
+
+## Documentation
+- Include JSDoc comments for complex functions
+- Document component props and behavior
+- Maintain README.md for project overview
+- Update this file as standards evolve

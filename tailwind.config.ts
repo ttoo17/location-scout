@@ -1,5 +1,8 @@
 
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+// @ts-expect-error - no types available
+import animatePlugin from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -117,5 +120,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [animatePlugin],
 } satisfies Config;

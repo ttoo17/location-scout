@@ -219,14 +219,14 @@ const SearchFilters = ({
     { value: "bohol", label: "Bohol", count: 55 }
   ];
 
-  // Default suggestions for popular searches
-  const defaultSuggestions: SearchSuggestion[] = [
-    { id: '1', text: 'Modern studio', type: 'trending', count: 45, icon: <TrendingUp className="h-4 w-4" /> },
-    { id: '2', text: 'Beach location', type: 'trending', count: 38, icon: <TrendingUp className="h-4 w-4" /> },
-    { id: '3', text: 'Rooftop venue', type: 'trending', count: 32, icon: <TrendingUp className="h-4 w-4" /> },
-    { id: '4', text: 'Photography studio', type: 'style', count: 28, icon: <Star className="h-4 w-4" /> },
-    { id: '5', text: 'Industrial space', type: 'style', count: 25, icon: <Star className="h-4 w-4" /> }
-  ];
+  // Default suggestions for popular searches - wrapped in useMemo to maintain stable reference
+  const defaultSuggestions = useMemo(() => [
+    { id: '1', text: 'Modern studio', type: 'trending' as const, count: 45, icon: <TrendingUp className="h-4 w-4" /> },
+    { id: '2', text: 'Beach location', type: 'trending' as const, count: 38, icon: <TrendingUp className="h-4 w-4" /> },
+    { id: '3', text: 'Rooftop venue', type: 'trending' as const, count: 32, icon: <TrendingUp className="h-4 w-4" /> },
+    { id: '4', text: 'Photography studio', type: 'style' as const, count: 28, icon: <Star className="h-4 w-4" /> },
+    { id: '5', text: 'Industrial space', type: 'style' as const, count: 25, icon: <Star className="h-4 w-4" /> }
+  ], []);
 
   // Combined suggestions from props, history, and defaults
   const allSuggestions = useMemo(() => {
@@ -239,9 +239,9 @@ const SearchFilters = ({
     }));
 
     const propSuggestions = suggestions.length > 0 ? suggestions : defaultSuggestions;
-    
+
     return [...historySuggestions, ...propSuggestions];
-  }, [history, suggestions]);
+  }, [history, suggestions, defaultSuggestions]);
 
   // Filter suggestions based on input
   const filteredSuggestions = useMemo(() => {

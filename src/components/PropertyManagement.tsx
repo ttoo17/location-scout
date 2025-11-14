@@ -892,7 +892,7 @@ const PropertyManagement: React.FC<PropertyManagementProps> = ({
                 <Label>Status</Label>
                 <select
                   value={availabilityStatus}
-                  onChange={(e) => setAvailabilityStatus(e.target.value as any)}
+                  onChange={(e) => setAvailabilityStatus(e.target.value as string)}
                   className="w-full px-3 py-2 border border-input rounded-md bg-background"
                 >
                   <option value="available">Available</option>

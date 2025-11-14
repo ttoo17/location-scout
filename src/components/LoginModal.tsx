@@ -56,8 +56,8 @@ interface ForgotPasswordData {
 interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
-  onLoginSuccess?: (user: any) => void
-  onRegisterSuccess?: (user: any) => void
+  onLoginSuccess?: (user: unknown) => void
+  onRegisterSuccess?: (user: unknown) => void
   initialMode?: 'login' | 'register' | 'forgot-password'
   enableSocialLogin?: boolean
   enableRegistration?: boolean

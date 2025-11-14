@@ -104,8 +104,9 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
   ({ label, helperText, className, id, ...props }, ref) => {
     const [isFocused, setIsFocused] = React.useState(false)
     const [hasValue, setHasValue] = React.useState(false)
-    
-    const inputId = id || `floating-input-${React.useId()}`
+
+    const generatedId = React.useId()
+    const inputId = id || `floating-input-${generatedId}`
     const helperTextId = `${inputId}-helper`
     
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -175,6 +176,7 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
 FloatingInput.displayName = "FloatingInput"
 
 // Password Input Component
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PasswordInputProps extends Omit<InputProps, "type"> {}
 
 const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(

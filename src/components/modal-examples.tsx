@@ -296,7 +296,7 @@ export function ModalExamples() {
                             {size.toUpperCase()}
                           </Button>
                         </ModalTrigger>
-                        <ModalContent size={size as any}>
+                        <ModalContent size={size as unknown}>
                           <ModalHeader>
                             <ModalTitle>{label} Modal</ModalTitle>
                             <ModalDescription>
@@ -349,7 +349,7 @@ export function ModalExamples() {
                             {label}
                           </Button>
                         </ModalTrigger>
-                        <ModalContent size="md" variant={variant as any}>
+                        <ModalContent size="md" variant={variant as unknown}>
                           <ModalHeader>
                             <ModalTitle className="flex items-center gap-2">
                               <Icon className="h-5 w-5" />

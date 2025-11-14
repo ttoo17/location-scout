@@ -280,11 +280,11 @@ const StatCard: React.FC<{
 
 // Data table component
 const DataTable: React.FC<{
-  data: any[]
+  data: unknown[]
   columns: Array<{
     key: string
     label: string
-    render?: (value: any, row: any) => React.ReactNode
+    render?: (value: unknown, row: unknown) => React.ReactNode
   }>
   sortable?: boolean
 }> = ({ data, columns, sortable = true }) => {

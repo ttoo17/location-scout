@@ -421,7 +421,7 @@ export function LoginModalExamples() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<'login' | 'register' | 'forgot-password'>('login')
   const [user, setUser] = useState<User | null>(null)
-  const [loginHistory, setLoginHistory] = useState<any[]>([])
+  const [loginHistory, setLoginHistory] = useState<unknown[]>([])
   const [modalConfig, setModalConfig] = useState({
     enableSocialLogin: true,
     enableRegistration: true,

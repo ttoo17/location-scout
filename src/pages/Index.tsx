@@ -23,6 +23,7 @@ const Index = () => {
     if (tagParam && !selectedFilters.includes(tagParam)) {
       setSelectedFilters([tagParam]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const handleFilterChange = (filters: string[]) => {
@@ -65,7 +66,7 @@ const Index = () => {
       locationId: string;
       imageIndex: number;
       image: string;
-      location: any;
+      location: unknown;
       title: string;
       tags: string[];
       description: string;
@@ -118,7 +119,7 @@ const Index = () => {
     });
   }, [allImages, searchTerm, selectedFilters, priceRange, currentLocation]);
 
-  const handleImageClick = (imageData: any) => {
+  const handleImageClick = (imageData: unknown) => {
     navigate(`/image/${imageData.locationId}/${imageData.imageIndex}`);
   };
 

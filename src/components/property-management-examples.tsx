@@ -491,9 +491,9 @@ export function PropertyManagementExamples() {
   const [properties, setProperties] = useState(mockProperties)
   const [showDemo, setShowDemo] = useState(false)
 
-  const handlePropertySave = (property: any) => {
-    setProperties(prev => 
-      prev.map(p => p.id === property.id ? property : p)
+  const handlePropertySave = (property: unknown) => {
+    setProperties(prev =>
+      prev.map(p => p.id === (property as Record<string, unknown>).id ? property : p)
     )
     console.log('Property saved:', property)
   }
@@ -503,7 +503,7 @@ export function PropertyManagementExamples() {
     console.log('Property deleted:', propertyId)
   }
 
-  const handleStatusChange = (propertyId: string, status: any) => {
+  const handleStatusChange = (propertyId: string, status: unknown) => {
     setProperties(prev => 
       prev.map(p => p.id === propertyId ? { ...p, status } : p)
     )

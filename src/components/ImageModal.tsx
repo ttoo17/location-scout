@@ -77,28 +77,28 @@ const ImageModal: React.FC<ImageModalProps> = ({
 
   const currentImage = images[currentIndex]
 
-  // Navigation functions
-  const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
-    resetImageTransform()
-  }, [images.length])
-
-  const goToPrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-    resetImageTransform()
-  }, [images.length])
-
-  const goToImage = useCallback((index: number) => {
-    setCurrentIndex(index)
-    resetImageTransform()
-  }, [])
-
-  // Transform functions
+  // Transform functions - define reset first
   const resetImageTransform = useCallback(() => {
     setZoom(1)
     setRotation(0)
     setPosition({ x: 0, y: 0 })
   }, [])
+
+  // Navigation functions
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % images.length)
+    resetImageTransform()
+  }, [images.length, resetImageTransform])
+
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+    resetImageTransform()
+  }, [images.length, resetImageTransform])
+
+  const goToImage = useCallback((index: number) => {
+    setCurrentIndex(index)
+    resetImageTransform()
+  }, [resetImageTransform])
 
   const handleZoomIn = useCallback(() => {
     setZoom(prev => Math.min(prev * 1.5, 5))
@@ -226,7 +226,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
         case ' ':
           e.preventDefault()
           if (enableSlideshow) {
-            isSlideshow ? stopSlideshow() : startSlideshow()
+            void (isSlideshow ? stopSlideshow() : startSlideshow())
           }
           break
         case '+':

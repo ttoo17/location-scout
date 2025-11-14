@@ -403,7 +403,7 @@ export function DashboardLayoutExamples() {
   const [showDemo, setShowDemo] = useState(false)
 
   const getBreadcrumbs = (path: string) => {
-    const pathMap: Record<string, any[]> = {
+    const pathMap: Record<string, unknown[]> = {
       '/admin/dashboard': [{ label: 'Dashboard' }],
       '/admin/locations': [
         { label: 'Dashboard', href: '/admin/dashboard' },
@@ -612,7 +612,7 @@ export function DashboardLayoutExamples() {
                       </div>
                       
                       <div>
-                        <h4 className="font-medium mb-2">Mobile (<768px)</h4>
+                        <h4 className="font-medium mb-2">Mobile (&lt;768px)</h4>
                         <ul className="text-sm space-y-1 text-muted-foreground">
                           <li>• Full-screen overlay menu</li>
                           <li>• Simplified header layout</li>

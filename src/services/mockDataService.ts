@@ -86,8 +86,8 @@ export interface User {
   stats: Stats;
   savedProperties: number[];
   role?: string;
-  preferences?: any;
-  scoutProfile?: any;
+  preferences?: unknown;
+  scoutProfile?: unknown;
 }
 
 export interface Profile {
@@ -146,29 +146,32 @@ class MockDataService {
     }));
     
     // Load users and normalize their data structure
-    this.users = mockUsers.map((user: any) => ({
-      id: Number(user.id), // Ensure IDs are numbers
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      joinDate: user.joinDate,
-      isVerified: user.isVerified,
-      profile: user.profile,
-      savedProperties: (user.savedProperties || []).map((id: any) => Number(id)), // Ensure saved property IDs are numbers
-      role: user.role,
-      preferences: user.preferences,
-      scoutProfile: user.scoutProfile,
+    this.users = mockUsers.map((user: unknown) => {
+      const userData = user as Record<string, unknown>;
+      const stats = userData.stats as Record<string, unknown>;
+      return {
+      id: Number(userData.id), // Ensure IDs are numbers
+      name: userData.name,
+      email: userData.email,
+      avatar: userData.avatar,
+      joinDate: userData.joinDate,
+      isVerified: userData.isVerified,
+      profile: userData.profile,
+      savedProperties: ((userData.savedProperties as unknown[]) || []).map((id: unknown) => Number(id)), // Ensure saved property IDs are numbers
+      role: userData.role,
+      preferences: userData.preferences,
+      scoutProfile: userData.scoutProfile,
       stats: {
-        totalBookings: user.stats.totalBookings || 0,
-        reviewsGiven: user.stats.reviewsGiven || 0,
-        totalSpent: user.stats.totalSpent || "₱0",
+        totalBookings: (stats.totalBookings as number) || 0,
+        reviewsGiven: (stats.reviewsGiven as number) || 0,
+        totalSpent: (stats.totalSpent as string) || "₱0",
         // Scout-specific stats (optional)
-        propertiesListed: user.stats.propertiesListed,
-        totalEarnings: user.stats.totalEarnings,
-        averageRating: user.stats.averageRating,
-        responseRate: user.stats.responseRate
+        propertiesListed: stats.propertiesListed,
+        totalEarnings: stats.totalEarnings,
+        averageRating: stats.averageRating,
+        responseRate: stats.responseRate
       }
-    }));
+    }});
     
     // Ensure booking IDs are consistent
     this.bookings = mockBookings.map(booking => ({
@@ -362,11 +365,11 @@ class MockDataService {
   }
 
   // Stats methods
-  getStats(): any {
+  getStats(): unknown {
     return mockStats;
   }
 
-  getPropertyStats(propertyId: number): any {
+  getPropertyStats(propertyId: number): unknown {
     const property = this.getProperty(propertyId);
     if (!property) return null;
 
