@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Star, Heart, Settings, User, CreditCard, Eye, MessageSquare, Bookmark, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import mockDataService, { Property, User as UserType, Booking } from "@/services/mockDataService";
+import mockDataService, { Property, User as UserType, Booking, MockDataServiceError } from "@/services/mockDataService";
 
 const UserDashboard = () => {
   const { toast } = useToast();
@@ -20,29 +20,70 @@ const UserDashboard = () => {
   const [allProperties] = useState<Property[]>(mockDataService.getProperties());
 
   useEffect(() => {
-    // Mock current user - in real app this would come from auth context
-    const user = mockDataService.getUser(1);
-    if (user) {
-      setCurrentUser(user);
-      setUserBookings(mockDataService.getBookingsByUser(1));
-      setSavedProperties(mockDataService.getUserSavedProperties(1));
+    try {
+      // Mock current user - in real app this would come from auth context
+      const user = mockDataService.getUser(1);
+      if (user) {
+        setCurrentUser(user);
+        try {
+          setUserBookings(mockDataService.getBookingsByUser(1));
+        } catch (error) {
+          console.error('Error loading bookings', error);
+          toast({ title: "Warning", description: "Could not load all bookings", variant: "destructive" });
+        }
+        try {
+          setSavedProperties(mockDataService.getUserSavedProperties(1));
+        } catch (error) {
+          console.error('Error loading saved properties', error);
+          toast({ title: "Warning", description: "Could not load saved properties", variant: "destructive" });
+        }
+      } else {
+        toast({ title: "Warning", description: "Could not load user profile", variant: "destructive" });
+      }
+    } catch (error) {
+      console.error('Error initializing user dashboard', error);
+      toast({ title: "Error", description: "Failed to load user data", variant: "destructive" });
     }
-  }, []);
+  }, [toast]);
 
   const toggleSaveProperty = (propertyId: number) => {
-    const property = allProperties.find(p => p.id === propertyId);
-    if (!property || !currentUser) return;
+    try {
+      if (!propertyId || typeof propertyId !== 'number') {
+        toast({ title: "Error", description: "Invalid property ID.", variant: "destructive" });
+        return;
+      }
 
-    const isSaved = mockDataService.isPropertySavedByUser(currentUser.id, propertyId);
-    
-    if (isSaved) {
-      mockDataService.unsavePropertyForUser(currentUser.id, propertyId);
-      setSavedProperties(prev => prev.filter(p => p.id !== propertyId));
-      toast({ title: "Property Removed", description: `Removed ${property.name} from saved properties.` });
-    } else {
-      mockDataService.savePropertyForUser(currentUser.id, propertyId);
-      setSavedProperties(prev => [...prev, property]);
-      toast({ title: "Property Saved", description: `Added ${property.name} to saved properties.` });
+      const property = allProperties.find(p => p.id === propertyId);
+      if (!property) {
+        toast({ title: "Error", description: "Property not found.", variant: "destructive" });
+        return;
+      }
+
+      if (!currentUser) {
+        toast({ title: "Error", description: "User not logged in.", variant: "destructive" });
+        return;
+      }
+
+      try {
+        const isSaved = mockDataService.isPropertySavedByUser(currentUser.id, propertyId);
+
+        if (isSaved) {
+          mockDataService.unsavePropertyForUser(currentUser.id, propertyId);
+          setSavedProperties(prev => prev.filter(p => p.id !== propertyId));
+          toast({ title: "Property Removed", description: `Removed ${property.name} from saved properties.` });
+        } else {
+          mockDataService.savePropertyForUser(currentUser.id, propertyId);
+          setSavedProperties(prev => [...prev, property]);
+          toast({ title: "Property Saved", description: `Added ${property.name} to saved properties.` });
+        }
+      } catch (error) {
+        console.error('Error toggling save property', error);
+        const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to save property';
+        toast({ title: "Error", description: errorMessage, variant: "destructive" });
+      }
+    } catch (error) {
+      console.error('Error in toggleSaveProperty', error);
+      toast({ title: "Error", description: "An unexpected error occurred", variant: "destructive" });
     }
   };
 

@@ -19,7 +19,7 @@ import BookingManager from "./BookingManager";
 import MessageCenter from "./MessageCenter";
 import PropertyEditModal from "./PropertyEditModal";
 import PropertyViewModal from "./PropertyViewModal";
-import mockDataService, { Property, PropertyImage } from "@/services/mockDataService";
+import mockDataService, { Property, PropertyImage, MockDataServiceError } from "@/services/mockDataService";
 
 const ScoutDashboard = () => {
   const { toast } = useToast();
@@ -131,41 +131,64 @@ const ScoutDashboard = () => {
       return;
     }
 
-    switch (action) {
-      case "activate":
-        selectedProperties.forEach(id => {
-          mockDataService.updateProperty(id, { status: "active" });
-        });
-        setScoutProperties(mockDataService.getProperties());
-        toast({ title: "Bulk Update", description: `${selectedProperties.length} properties activated.` });
-        break;
-      case "deactivate":
-        selectedProperties.forEach(id => {
-          mockDataService.updateProperty(id, { status: "inactive" });
-        });
-        setScoutProperties(mockDataService.getProperties());
-        toast({ title: "Bulk Update", description: `${selectedProperties.length} properties deactivated.` });
-        break;
-      case "delete":
-        selectedProperties.forEach(id => {
-          mockDataService.deleteProperty(id);
-        });
-        setScoutProperties(mockDataService.getProperties());
-        toast({ title: "Bulk Delete", description: `${selectedProperties.length} properties deleted.`, variant: "destructive" });
-        break;
-      case "export":
-        handleExport();
-        break;
+    try {
+      switch (action) {
+        case "activate":
+          selectedProperties.forEach(id => {
+            try {
+              mockDataService.updateProperty(id, { status: "active" } as any);
+            } catch (error) {
+              console.error(`Failed to activate property ${id}`, error);
+            }
+          });
+          setScoutProperties(mockDataService.getProperties());
+          toast({ title: "Bulk Update", description: `${selectedProperties.length} properties activated.` });
+          break;
+        case "deactivate":
+          selectedProperties.forEach(id => {
+            try {
+              mockDataService.updateProperty(id, { status: "inactive" } as any);
+            } catch (error) {
+              console.error(`Failed to deactivate property ${id}`, error);
+            }
+          });
+          setScoutProperties(mockDataService.getProperties());
+          toast({ title: "Bulk Update", description: `${selectedProperties.length} properties deactivated.` });
+          break;
+        case "delete":
+          selectedProperties.forEach(id => {
+            try {
+              mockDataService.deleteProperty(id);
+            } catch (error) {
+              console.error(`Failed to delete property ${id}`, error);
+            }
+          });
+          setScoutProperties(mockDataService.getProperties());
+          toast({ title: "Bulk Delete", description: `${selectedProperties.length} properties deleted.`, variant: "destructive" });
+          break;
+        case "export":
+          handleExport();
+          break;
+      }
+      setSelectedProperties([]);
+    } catch (error) {
+      console.error('Error in bulk action', error);
+      toast({ title: "Error", description: "Failed to complete bulk action. Please try again.", variant: "destructive" });
     }
-    setSelectedProperties([]);
   }, [selectedProperties, toast]);
 
   const handleExport = useCallback(async () => {
-    setIsExporting(true);
-    // Simulate export process
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    toast({ title: "Export Complete", description: "Properties exported successfully." });
-    setIsExporting(false);
+    try {
+      setIsExporting(true);
+      // Simulate export process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      toast({ title: "Export Complete", description: "Properties exported successfully." });
+    } catch (error) {
+      console.error('Error during export', error);
+      toast({ title: "Export Failed", description: "Failed to export properties. Please try again.", variant: "destructive" });
+    } finally {
+      setIsExporting(false);
+    }
   }, [toast]);
 
   const handleSelectAll = useCallback(() => {
@@ -178,21 +201,51 @@ const ScoutDashboard = () => {
 
   // Image Management Functions
   const handleAddImage = (propertyId: number, imageData: Omit<PropertyImage, "id">) => {
-    mockDataService.addImageToProperty(propertyId, imageData);
-    setScoutProperties(mockDataService.getProperties());
-    toast({ title: "Image Added", description: "Image has been added to the property." });
+    try {
+      if (!propertyId || !imageData) {
+        toast({ title: "Error", description: "Invalid property or image data.", variant: "destructive" });
+        return;
+      }
+      mockDataService.addImageToProperty(propertyId, imageData);
+      setScoutProperties(mockDataService.getProperties());
+      toast({ title: "Image Added", description: "Image has been added to the property." });
+    } catch (error) {
+      console.error('Error adding image', error);
+      const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to add image';
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
+    }
   };
 
   const handleUpdateImage = (propertyId: number, imageId: number, updates: Partial<PropertyImage>) => {
-    mockDataService.updatePropertyImage(propertyId, imageId, updates);
-    setScoutProperties(mockDataService.getProperties());
-    toast({ title: "Image Updated", description: "Image details have been updated." });
+    try {
+      if (!propertyId || !imageId || !updates) {
+        toast({ title: "Error", description: "Invalid update data.", variant: "destructive" });
+        return;
+      }
+      mockDataService.updatePropertyImage(propertyId, imageId, updates);
+      setScoutProperties(mockDataService.getProperties());
+      toast({ title: "Image Updated", description: "Image details have been updated." });
+    } catch (error) {
+      console.error('Error updating image', error);
+      const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to update image';
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
+    }
   };
 
   const handleDeleteImage = (propertyId: number, imageId: number) => {
-    mockDataService.deletePropertyImage(propertyId, imageId);
-    setScoutProperties(mockDataService.getProperties());
-    toast({ title: "Image Deleted", description: "Image has been removed from the property." });
+    try {
+      if (!propertyId || !imageId) {
+        toast({ title: "Error", description: "Invalid property or image ID.", variant: "destructive" });
+        return;
+      }
+      mockDataService.deletePropertyImage(propertyId, imageId);
+      setScoutProperties(mockDataService.getProperties());
+      toast({ title: "Image Deleted", description: "Image has been removed from the property." });
+    } catch (error) {
+      console.error('Error deleting image', error);
+      const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to delete image';
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
+    }
   };
 
   // Tag Management Functions
@@ -226,65 +279,102 @@ const ScoutDashboard = () => {
 
   // Property Management Functions
   const handleAddProperty = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-    const newPropertyData = {
-      name: formData.get("name") as string,
-      location: formData.get("location") as string,
-      category: formData.get("category") as string,
-      price: formData.get("price") as string,
-      description: formData.get("description") as string || "No description provided",
-      status: "pending" as const,
-      bookings: 0,
-      rating: 0,
-      views: 0,
-      revenue: "₱0",
-      lastUpdated: new Date().toISOString().split('T')[0],
-      ownerId: 1, // Current scout ID
-      images: [],
-      features: [],
-      tags: [],
-      amenities: [],
-      attachedMovies: [],
-      metadata: {
-        sizeM2: 100,
-        powerAmps: 30,
-        maxCrew: 10,
-        parking: true,
-        coordinates: { lat: 0, lng: 0 },
-        ceilingHeight: 3,
-        naturalLight: true,
-        soundProofing: false,
-        loadingAccess: true,
-        greenScreen: false,
-        cyc: false,
-        grip: true,
-        catering: false,
-        makeupRoom: false,
-        clientArea: false
-      }
-    };
+    try {
+      e.preventDefault();
+      const formData = new FormData(e.currentTarget as HTMLFormElement);
 
-    mockDataService.addProperty(newPropertyData);
-    setScoutProperties(mockDataService.getProperties());
-    setIsAddLocationOpen(false);
-    toast({ title: "Property Added", description: "Your new property has been added successfully." });
+      const name = formData.get("name") as string;
+      const location = formData.get("location") as string;
+
+      if (!name?.trim() || !location?.trim()) {
+        toast({ title: "Validation Error", description: "Property name and location are required.", variant: "destructive" });
+        return;
+      }
+
+      const newPropertyData = {
+        name: name.trim(),
+        location: location.trim(),
+        category: formData.get("category") as string,
+        price: formData.get("price") as string,
+        description: (formData.get("description") as string) || "No description provided",
+        status: "pending" as const,
+        bookings: 0,
+        rating: 0,
+        views: 0,
+        revenue: "₱0",
+        lastUpdated: new Date().toISOString().split('T')[0],
+        ownerId: 1, // Current scout ID
+        images: [],
+        features: [],
+        tags: [],
+        amenities: [],
+        attachedMovies: [],
+        metadata: {
+          sizeM2: 100,
+          powerAmps: 30,
+          maxCrew: 10,
+          parking: true,
+          coordinates: { lat: 0, lng: 0 },
+          ceilingHeight: 3,
+          naturalLight: true,
+          soundProofing: false,
+          loadingAccess: true,
+          greenScreen: false,
+          cyc: false,
+          grip: true,
+          catering: false,
+          makeupRoom: false,
+          clientArea: false
+        }
+      };
+
+      mockDataService.addProperty(newPropertyData);
+      setScoutProperties(mockDataService.getProperties());
+      setIsAddLocationOpen(false);
+      toast({ title: "Property Added", description: "Your new property has been added successfully." });
+    } catch (error) {
+      console.error('Error adding property', error);
+      const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to add property';
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
+    }
   };
 
   const handleDeleteProperty = (propertyId: number) => {
-    mockDataService.deleteProperty(propertyId);
-    setScoutProperties(mockDataService.getProperties());
-    toast({ title: "Property Deleted", description: "Property has been removed.", variant: "destructive" });
+    try {
+      if (!propertyId) {
+        toast({ title: "Error", description: "Invalid property ID.", variant: "destructive" });
+        return;
+      }
+      mockDataService.deleteProperty(propertyId);
+      setScoutProperties(mockDataService.getProperties());
+      toast({ title: "Property Deleted", description: "Property has been removed.", variant: "destructive" });
+    } catch (error) {
+      console.error('Error deleting property', error);
+      const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to delete property';
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
+    }
   };
 
   const handleToggleStatus = (propertyId: number) => {
-    const property = mockDataService.getProperty(propertyId);
-    if (property) {
-      mockDataService.updateProperty(propertyId, { 
-        status: property.status === "active" ? "inactive" : "active" 
-      });
+    try {
+      if (!propertyId) {
+        toast({ title: "Error", description: "Invalid property ID.", variant: "destructive" });
+        return;
+      }
+      const property = mockDataService.getProperty(propertyId);
+      if (!property) {
+        toast({ title: "Error", description: "Property not found.", variant: "destructive" });
+        return;
+      }
+      mockDataService.updateProperty(propertyId, {
+        status: property.status === "active" ? "inactive" : "active"
+      } as any);
       setScoutProperties(mockDataService.getProperties());
       toast({ title: "Status Updated", description: "Property status has been changed." });
+    } catch (error) {
+      console.error('Error toggling property status', error);
+      const errorMessage = error instanceof MockDataServiceError ? error.message : 'Failed to update property status';
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
     }
   };
 
