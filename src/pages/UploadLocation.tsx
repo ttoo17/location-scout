@@ -1,7 +1,9 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, Upload, MapPin, DollarSign, Users, Zap, Car, CheckCircle } from "lucide-react";
+import { Camera, Upload, MapPin, DollarSign, Users, Zap, Car, CheckCircle, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import locationStorageService from "../services/locationStorageService";
 
 const UploadLocation = () => {
   const navigate = useNavigate();
@@ -65,8 +67,51 @@ const UploadLocation = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Submit location data to backend
-    navigate('/');
+
+    // Validate form data
+    const validation = locationStorageService.validateLocation(formData);
+
+    if (!validation.isValid) {
+      // Show error toast for each validation error
+      validation.errors.forEach(error => {
+        toast.error(error, {
+          description: 'Please complete all required fields',
+          duration: 4000,
+        });
+      });
+      return;
+    }
+
+    // Check if at least one image is uploaded
+    if (formData.images.length === 0) {
+      toast.error('Please upload at least one photo', {
+        description: 'Add photos to showcase your location',
+        duration: 4000,
+      });
+      return;
+    }
+
+    try {
+      // Save location to localStorage and mock service
+      const savedLocation = locationStorageService.saveLocation(formData);
+
+      // Show success toast
+      toast.success('Location uploaded successfully! 🎉', {
+        description: `Your "${formData.title}" has been listed and is now visible to scouts.`,
+        duration: 4000,
+      });
+
+      // Navigate to home page after brief delay
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (error) {
+      console.error('Error saving location:', error);
+      toast.error('Failed to upload location', {
+        description: 'Please try again later',
+        duration: 4000,
+      });
+    }
   };
 
   const nextStep = () => {
