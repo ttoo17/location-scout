@@ -15,21 +15,29 @@ const AdminDashboard = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    // Redirect if not authenticated
     if (!isAuthenticated) {
       navigate("/");
       return;
     }
-    
+
+    // Redirect if user is not an admin
+    if (userRole !== 'admin') {
+      navigate("/");
+      return;
+    }
+
     // Mock current user data - in real app this would come from auth context
     const mockCurrentUser = mockDataService.getUser(1);
     setCurrentUser(mockCurrentUser);
-    
+
     if (userRole) {
       setUserType(userRole);
     }
   }, [isAuthenticated, userRole, navigate]);
 
-  if (!isAuthenticated) {
+  // Show nothing while authentication/authorization check is in progress
+  if (!isAuthenticated || userRole !== 'admin') {
     return null;
   }
 

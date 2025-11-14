@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type UserRole = 'user' | 'scout' | null;
+type UserRole = 'user' | 'scout' | 'admin' | null;
 
 interface AuthContextType {
   isAuthenticated: boolean;
