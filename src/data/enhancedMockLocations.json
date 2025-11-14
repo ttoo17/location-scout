@@ -1,0 +1,143 @@
+[
+  {
+    "id": 4,
+    "name": "Vigan Heritage Streets",
+    "location": "Vigan City, Ilocos Sur",
+    "category": "Heritage",
+    "price": "₱4,500",
+    "status": "active",
+    "bookings": 112,
+    "rating": 4.9,
+    "description": "UNESCO World Heritage cobblestone streets with Spanish colonial architecture, perfect for period films and cultural documentaries.",
+    "lastUpdated": "2024-01-22",
+    "views": 2156,
+    "revenue": "₱504,000",
+    "ownerId": 4,
+    "images": [
+      {
+        "id": 5,
+        "url": "https://images.unsplash.com/photo-1539650116574-75c0c6d73dc9?w=800&h=600&fit=crop",
+        "title": "Cobblestone Street",
+        "description": "Historic Spanish colonial street with traditional kalesa",
+        "alt": "Vigan heritage cobblestone street",
+        "tags": ["heritage", "natural-light", "all-season", "historic", "brown", "stone", "colonial", "street", "traditional", "cultural", "wide-angle"],
+        "isPrimary": true
+      }
+    ],
+    "features": ["Colonial Architecture", "Cobblestone Streets", "Historical Significance", "Cultural Heritage"],
+    "tags": ["Heritage", "Colonial", "Historic", "Cultural", "Architecture", "UNESCO", "Traditional"],
+    "amenities": ["Tour Guide", "Parking", "Permit Assistance", "Local Coordination"],
+    "attachedMovies": [],
+    "metadata": {
+      "sizeM2": 200,
+      "powerAmps": 40,
+      "maxCrew": 20,
+      "parking": true,
+      "coordinates": { "lat": 17.5747, "lng": 120.3869 },
+      "ceilingHeight": 0,
+      "naturalLight": true,
+      "soundProofing": false,
+      "loadingAccess": true,
+      "greenScreen": false,
+      "cyc": false,
+      "grip": false,
+      "catering": true,
+      "makeupRoom": false,
+      "clientArea": true
+    }
+  },
+  {
+    "id": 5,
+    "name": "El Nido Lagoon",
+    "location": "El Nido, Palawan",
+    "category": "Beach",
+    "price": "₱8,000",
+    "status": "active",
+    "bookings": 89,
+    "rating": 4.8,
+    "description": "Stunning limestone cliffs and crystal-clear lagoons, perfect for adventure films and nature documentaries.",
+    "lastUpdated": "2024-01-18",
+    "views": 3247,
+    "revenue": "₱712,000",
+    "ownerId": 5,
+    "images": [
+      {
+        "id": 6,
+        "url": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+        "title": "Limestone Lagoon",
+        "description": "Dramatic limestone cliffs surrounding turquoise lagoon",
+        "alt": "El Nido limestone lagoon",
+        "tags": ["landscape", "natural-light", "summer", "clear", "blue", "turquoise", "green", "limestone", "cliffs", "lagoon", "dramatic", "aerial"],
+        "isPrimary": true
+      }
+    ],
+    "features": ["Limestone Cliffs", "Turquoise Waters", "Island Hopping", "Snorkeling"],
+    "tags": ["Beach", "Lagoon", "Limestone", "Cliffs", "Island", "Adventure", "Nature"],
+    "amenities": ["Boat Transfer", "Snorkeling Gear", "Lunch Included", "Guide"],
+    "attachedMovies": [],
+    "metadata": {
+      "sizeM2": 300,
+      "powerAmps": 25,
+      "maxCrew": 10,
+      "parking": false,
+      "coordinates": { "lat": 11.1949, "lng": 119.4013 },
+      "ceilingHeight": 0,
+      "naturalLight": true,
+      "soundProofing": false,
+      "loadingAccess": false,
+      "greenScreen": false,
+      "cyc": false,
+      "grip": false,
+      "catering": true,
+      "makeupRoom": false,
+      "clientArea": false
+    }
+  },
+  {
+    "id": 6,
+    "name": "Intramuros Fort Santiago",
+    "location": "Manila City",
+    "category": "Heritage",
+    "price": "₱6,000",
+    "status": "active",
+    "bookings": 156,
+    "rating": 4.7,
+    "description": "Historic Spanish fortress with ancient walls and dungeons, perfect for period dramas and historical documentaries.",
+    "lastUpdated": "2024-01-20",
+    "views": 2891,
+    "revenue": "₱936,000",
+    "ownerId": 6,
+    "images": [
+      {
+        "id": 7,
+        "url": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop",
+        "title": "Stone Fortress",
+        "description": "Ancient stone fortress walls with historical significance",
+        "alt": "Fort Santiago stone walls",
+        "tags": ["heritage", "natural-light", "all-season", "historic", "stone", "gray", "fortress", "walls", "colonial", "dramatic", "wide-angle"],
+        "isPrimary": true
+      }
+    ],
+    "features": ["Historic Fortress", "Stone Architecture", "Dungeons", "Museums"],
+    "tags": ["Heritage", "Fortress", "Historic", "Spanish", "Colonial", "Stone", "Military"],
+    "amenities": ["Museum Access", "Parking", "Security", "Guided Tours"],
+    "attachedMovies": [],
+    "metadata": {
+      "sizeM2": 400,
+      "powerAmps": 50,
+      "maxCrew": 30,
+      "parking": true,
+      "coordinates": { "lat": 14.5906, "lng": 120.9750 },
+      "ceilingHeight": 0,
+      "naturalLight": true,
+      "soundProofing": false,
+      "loadingAccess": true,
+      "greenScreen": false,
+      "cyc": false,
+      "grip": false,
+      "catering": true,
+      "makeupRoom": false,
+      "clientArea": true
+    }
+  }
+]

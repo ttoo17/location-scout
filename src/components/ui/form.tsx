@@ -164,6 +164,51 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = "FormMessage"
 
+// Enhanced Form Components with better validation display
+const FormFieldWrapper = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    error?: string
+    success?: string
+    warning?: string
+  }
+>(({ className, error, success, warning, children, ...props }, ref) => {
+  return (
+    <div 
+      ref={ref} 
+      className={cn(
+        "space-y-2",
+        error && "text-destructive",
+        success && "text-green-600",
+        warning && "text-yellow-600",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+      {error && (
+        <p className="text-sm font-medium text-destructive flex items-center gap-1">
+          <span className="w-4 h-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs">!</span>
+          {error}
+        </p>
+      )}
+      {success && (
+        <p className="text-sm font-medium text-green-600 flex items-center gap-1">
+          <span className="w-4 h-4 rounded-full bg-green-600 text-white flex items-center justify-center text-xs">✓</span>
+          {success}
+        </p>
+      )}
+      {warning && (
+        <p className="text-sm font-medium text-yellow-600 flex items-center gap-1">
+          <span className="w-4 h-4 rounded-full bg-yellow-600 text-white flex items-center justify-center text-xs">!</span>
+          {warning}
+        </p>
+      )}
+    </div>
+  )
+})
+FormFieldWrapper.displayName = "FormFieldWrapper"
+
 export {
   useFormField,
   Form,
@@ -173,4 +218,5 @@ export {
   FormDescription,
   FormMessage,
   FormField,
+  FormFieldWrapper,
 }

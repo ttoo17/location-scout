@@ -1,8 +1,9 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import { Check, ChevronDown, ChevronUp, Search, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Input } from "./input"
 
 const Select = SelectPrimitive.Root
 
@@ -144,6 +145,133 @@ const SelectSeparator = React.forwardRef<
 ))
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
+// Enhanced Select with Search
+export interface SearchableSelectOption {
+  value: string
+  label: string
+  disabled?: boolean
+}
+
+export interface SearchableSelectProps {
+  options: SearchableSelectOption[]
+  value?: string
+  onValueChange?: (value: string) => void
+  placeholder?: string
+  searchPlaceholder?: string
+  className?: string
+  disabled?: boolean
+  clearable?: boolean
+}
+
+const SearchableSelect = React.forwardRef<
+  HTMLDivElement,
+  SearchableSelectProps
+>(({ 
+  options, 
+  value, 
+  onValueChange, 
+  placeholder = "Select an option...",
+  searchPlaceholder = "Search options...",
+  className,
+  disabled = false,
+  clearable = false
+}, ref) => {
+  const [open, setOpen] = React.useState(false)
+  const [searchTerm, setSearchTerm] = React.useState("")
+  const searchInputRef = React.useRef<HTMLInputElement>(null)
+  
+  const filteredOptions = React.useMemo(() => {
+    if (!searchTerm) return options
+    return options.filter(option =>
+      option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      option.value.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }, [options, searchTerm])
+  
+  const selectedOption = options.find(option => option.value === value)
+  
+  const handleSelect = (selectedValue: string) => {
+    onValueChange?.(selectedValue)
+    setOpen(false)
+    setSearchTerm("")
+  }
+  
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onValueChange?.("")
+  }
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen)
+    if (newOpen) {
+      // Focus search input when opening
+      setTimeout(() => {
+        searchInputRef.current?.focus()
+      }, 0)
+    } else {
+      setSearchTerm("")
+    }
+  }
+
+  return (
+    <div ref={ref} className={cn("relative", className)}>
+      <Select open={open} onOpenChange={handleOpenChange} value={value} onValueChange={handleSelect} disabled={disabled}>
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder={placeholder}>
+            {selectedOption?.label}
+          </SelectValue>
+          {clearable && value && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="mr-2 p-1 hover:bg-accent rounded-sm transition-colors"
+              aria-label="Clear selection"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </SelectTrigger>
+        <SelectContent>
+          <div className="p-2 border-b">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                ref={searchInputRef}
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 h-8"
+                onKeyDown={(e) => {
+                  // Prevent closing the select when typing
+                  e.stopPropagation()
+                }}
+              />
+            </div>
+          </div>
+          <div className="max-h-60 overflow-auto">
+            {filteredOptions.length === 0 ? (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                {searchTerm ? `No results for "${searchTerm}"` : "No options available"}
+              </div>
+            ) : (
+              filteredOptions.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
+                  {option.label}
+                </SelectItem>
+              ))
+            )}
+          </div>
+        </SelectContent>
+      </Select>
+    </div>
+  )
+})
+SearchableSelect.displayName = "SearchableSelect"
+
 export {
   Select,
   SelectGroup,
@@ -155,4 +283,5 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
+  SearchableSelect,
 }
