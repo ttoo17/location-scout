@@ -19,6 +19,9 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
+import Favorites from "./pages/Favorites";
+import MyLocations from "./pages/MyLocations";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +50,9 @@ const App = () => (
                     <Route path="/scouts" element={<LocationScouts />} />
                     <Route path="/scout/:id" element={<ScoutProfile />} />
                     <Route path="/upload" element={<UploadLocation />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/favorites" element={<Favorites />} />
+                    <Route path="/my-locations" element={<MyLocations />} />
                     <Route path="/how-it-works" element={<HowItWorks />} />
                     <Route path="/support" element={<Support />} />
                     <Route path="/privacy" element={<Privacy />} />
