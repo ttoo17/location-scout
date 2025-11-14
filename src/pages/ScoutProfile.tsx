@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Star, MessageCircle, Calendar, Camera, Users, Clock, Award, Heart, Share2, Search, Filter } from "lucide-react";
-import { mockLocations } from "../data/mockData";
+import { mockLocations, mockDataService } from "../data/mockData";
 import LocationCard from "../components/LocationCard";
 import MessageModal from "../components/MessageModal";
 import BookingModal from "../components/BookingModal";
@@ -16,22 +16,26 @@ const ScoutProfile = () => {
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
-  // Mock scout data - in real app this would come from API
-  const scout = {
-    id: id || "1",
-    name: "Maria Santos",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face",
+  // Load scout data from service based on ID
+  const scoutId = parseInt(id || "1");
+  const scoutUser = useMemo(() => mockDataService.getUser(scoutId), [scoutId]);
+
+  // Default fallback scout data if not found
+  const scout = scoutUser ? {
+    id: scoutUser.id.toString(),
+    name: scoutUser.name,
+    avatar: scoutUser.avatar,
     coverImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=300&fit=crop",
-    rating: 4.9,
-    reviewCount: 127,
-    specialty: ["Manila Bay Sunsets", "Intramuros Heritage", "BGC Modern"],
-    location: "Metro Manila",
-    experience: "5+ years",
-    responseTime: "Within 2 hours",
-    totalBookings: 340,
-    languages: ["English", "Filipino", "Tagalog"],
-    priceRange: "₱3,000 - ₱15,000",
-    about: "Specialized in finding unique Manila locations from Spanish colonial heritage sites in Intramuros to modern BGC skylines and iconic Manila Bay sunsets. I have extensive knowledge of permits, local connections, and hidden gems throughout Metro Manila.",
+    rating: scoutUser.stats.averageRating || 4.5,
+    reviewCount: scoutUser.stats.totalBookings || 0,
+    specialty: scoutUser.scoutProfile?.specialties || [],
+    location: scoutUser.profile?.location || "Philippines",
+    experience: scoutUser.scoutProfile?.experience || "N/A",
+    responseTime: scoutUser.scoutProfile?.responseTime || "N/A",
+    totalBookings: scoutUser.stats.totalBookings || 0,
+    languages: scoutUser.scoutProfile?.languages || ["English"],
+    priceRange: `₱0 - ₱50,000+`,
+    about: scoutUser.profile?.bio || "Professional location scout",
     services: [
       "Location scouting and research",
       "Permit assistance and coordination",
@@ -40,34 +44,21 @@ const ScoutProfile = () => {
       "Equipment rental connections",
       "Cultural sensitivity guidance"
     ],
-    reviews: [
-      {
-        id: "1",
-        author: "John Photographer",
-        rating: 5,
-        date: "2 weeks ago",
-        comment: "Maria was exceptional! She found the perfect locations for our fashion shoot and handled all permits seamlessly."
-      },
-      {
-        id: "2",
-        author: "Sarah Filmmaker",
-        rating: 5,
-        date: "1 month ago",
-        comment: "Incredible local knowledge and connections. Made our Manila documentary shoot possible in just 3 days."
-      }
-    ],
+    reviews: [],
     statistics: {
-      repeatClients: "85%",
-      onTimeRate: "99%",
-      satisfactionScore: "4.9/5",
-      projectsCompleted: "340+"
+      repeatClients: scoutUser.scoutProfile?.successRate || "0%",
+      onTimeRate: scoutUser.scoutProfile?.responseRate || "0%",
+      satisfactionScore: `${scoutUser.stats.averageRating || 4.5}/5`,
+      projectsCompleted: `${scoutUser.stats.totalBookings || 0}+`
     }
-  };
+  } : null;
 
-  // Filter scout's locations
-  const scoutLocations = mockLocations.filter(location => 
-    // In real app, this would filter by scout ID
-    true // For now, show all locations as if they're managed by this scout
+  // Filter scout's locations by ownerId
+  const scoutLocations = useMemo(() =>
+    mockLocations.filter(location => {
+      const property = mockDataService.getProperty(parseInt(location.id));
+      return property && property.ownerId === scoutId;
+    }), [scoutId]
   );
 
   const filteredLocations = scoutLocations.filter(location => {
