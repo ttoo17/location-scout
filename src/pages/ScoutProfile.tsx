@@ -425,10 +425,24 @@ const ScoutProfile = () => {
         location={{ id: scout.id, title: `Chat with ${scout.name}`, location: scout.location }}
       />
       
-      <BookingModal 
+      <BookingModal
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
-        location={{ id: scout.id, title: `Book ${scout.name}`, location: scout.location, price: 0 }}
+        location={{
+          id: scout.id,
+          title: `Book ${scout.name}`,
+          location: scout.location,
+          price: 0,
+          heroImage: scout.avatar || '',
+          rating: 0,
+          reviews: 0,
+          metadata: {
+            sizeM2: 0,
+            powerAmps: 0,
+            maxCrew: 0,
+            parking: false
+          }
+        }}
       />
     </div>
   );

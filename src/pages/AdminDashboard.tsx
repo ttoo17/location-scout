@@ -11,8 +11,8 @@ import mockDataService from "@/services/mockDataService";
 const AdminDashboard = () => {
   const { isAuthenticated, userRole } = useAuth();
   const navigate = useNavigate();
-  const [userType, setUserType] = useState<"user" | "scout">("user");
-  const [currentUser, setCurrentUser] = useState(null);
+  const [userType, setUserType] = useState<"user" | "scout" | "admin">("user");
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -23,8 +23,8 @@ const AdminDashboard = () => {
     // Mock current user data - in real app this would come from auth context
     const mockCurrentUser = mockDataService.getUser(1);
     setCurrentUser(mockCurrentUser);
-    
-    if (userRole) {
+
+    if (userRole && (userRole === 'user' || userRole === 'scout' || userRole === 'admin')) {
       setUserType(userRole);
     }
   }, [isAuthenticated, userRole, navigate]);

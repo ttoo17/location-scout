@@ -16,7 +16,7 @@ export interface DatePickerProps {
   date?: Date
   onDateChange?: (date: Date | undefined) => void
   placeholder?: string
-  disabled?: boolean
+  disabled?: boolean | ((date: Date) => boolean)
   className?: string
   clearable?: boolean
   minDate?: Date
@@ -60,7 +60,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 !date && "text-muted-foreground",
                 error && "border-destructive focus-visible:ring-destructive"
               )}
-              disabled={disabled}
+              disabled={typeof disabled === 'boolean' ? disabled : false}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {date ? format(date, "PPP") : placeholder}
@@ -84,6 +84,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
               disabled={(date) => {
                 if (minDate && date < minDate) return true
                 if (maxDate && date > maxDate) return true
+                if (typeof disabled === 'function') return disabled(date)
                 return false
               }}
               autoFocus
@@ -155,7 +156,7 @@ const DateRangePicker = React.forwardRef<HTMLButtonElement, DateRangePickerProps
                 !dateRange?.from && "text-muted-foreground",
                 error && "border-destructive focus-visible:ring-destructive"
               )}
-              disabled={disabled}
+              disabled={typeof disabled === 'boolean' ? disabled : false}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {formatDateRange(dateRange)}

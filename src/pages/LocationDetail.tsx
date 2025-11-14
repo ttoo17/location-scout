@@ -4,7 +4,7 @@ import { ArrowLeft, MapPin, Users, Zap, Car, MessageCircle, Calendar, Heart, Sha
 import { mockLocations } from "../data/mockData";
 import BookingModal from "../components/BookingModal";
 import MessageModal from "../components/MessageModal";
-import ImageModal from "../components/ImageModal";
+import ImageModal, { type ImageData } from "../components/ImageModal";
 
 const LocationDetail = () => {
   const { id } = useParams();
@@ -43,7 +43,16 @@ const LocationDetail = () => {
     );
   }
 
-  const allImages = [location.heroImage, ...location.gallery];
+  const galleryImages = [location.heroImage, ...location.gallery];
+  const modalImages: ImageData[] = [
+    { id: '0', src: location.heroImage, alt: location.title, title: location.title },
+    ...location.gallery.map((img, idx) => ({
+      id: String(idx + 1),
+      src: img,
+      alt: `${location.title} - Photo ${idx + 1}`,
+      title: `${location.title} - Photo ${idx + 1}`
+    }))
+  ];
 
   // Mock additional data that would come from API
   const locationDetails = {
@@ -167,19 +176,19 @@ const LocationDetail = () => {
       <div className="relative">
         <div className="aspect-[16/9] md:aspect-[3/1] bg-gray-100">
           <img
-            src={allImages[currentImageIndex]}
-            alt={`${location.title} - Main view ${currentImageIndex + 1} of ${allImages.length}`}
+            src={galleryImages[currentImageIndex]}
+            alt={`${location.title} - Main view ${currentImageIndex + 1} of ${galleryImages.length}`}
             className="w-full h-full object-cover cursor-pointer hover:brightness-110 transition-all"
             onClick={() => handleImageClick(currentImageIndex)}
           />
         </div>
 
         {/* Image Navigation */}
-        {allImages.length > 1 && (
+        {galleryImages.length > 1 && (
           <>
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
               <div className="flex gap-2 bg-black/60 backdrop-blur-sm rounded-xl p-2">
-                {allImages.map((_, index) => (
+                {galleryImages.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
@@ -193,13 +202,13 @@ const LocationDetail = () => {
 
             {/* Arrow Navigation */}
             <button
-              onClick={() => setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)}
+              onClick={() => setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)}
               className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-all hover:scale-110"
             >
               ‹
             </button>
             <button
-              onClick={() => setCurrentImageIndex((prev) => (prev + 1) % allImages.length)}
+              onClick={() => setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-all hover:scale-110"
             >
               ›
@@ -208,7 +217,7 @@ const LocationDetail = () => {
         )}
 
         <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-xl text-sm font-medium">
-          {currentImageIndex + 1} / {allImages.length}
+          {currentImageIndex + 1} / {galleryImages.length}
         </div>
 
         <button
@@ -316,11 +325,11 @@ const LocationDetail = () => {
             </div>
 
             {/* Photo Gallery Grid */}
-            {allImages.length > 1 && (
+            {galleryImages.length > 1 && (
               <div className="mb-8">
                 <h2 className="text-2xl font-semibold mb-6">Photo Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {allImages.map((image, index) => (
+                  {galleryImages.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => handleImageClick(index)}
@@ -491,10 +500,8 @@ const LocationDetail = () => {
       <ImageModal
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
-        images={allImages}
-        currentIndex={currentImageIndex}
-        onIndexChange={setCurrentImageIndex}
-        locationTitle={location.title}
+        images={modalImages}
+        initialIndex={currentImageIndex}
       />
     </div>
   );

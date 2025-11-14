@@ -87,13 +87,16 @@ const PropertyEditModal = ({ property, isOpen, onClose, onSave, onAddImage, onUp
   };
 
   const updateMetadata = (key: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      metadata: {
-        ...(prev.metadata || property?.metadata),
-        [key]: value
+    setFormData(prev => {
+      const newMetadata = { ...(prev.metadata || property?.metadata || {}) };
+      if (value !== undefined) {
+        newMetadata[key] = value;
       }
-    }));
+      return {
+        ...prev,
+        metadata: newMetadata as any
+      };
+    });
   };
 
   if (!property) return null;

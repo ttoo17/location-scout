@@ -17,7 +17,7 @@ import {
   Bookmark
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ImageModal from "./ImageModal";
+import ImageModal, { type ImageData } from "./ImageModal";
 import { cn } from "@/lib/utils";
 
 interface Location {
@@ -313,7 +313,16 @@ const LocationCard = ({ location }: LocationCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const allImages = [location.heroImage, ...location.gallery];
+  const galleryImages = [location.heroImage, ...location.gallery];
+  const modalImages: ImageData[] = [
+    { id: '0', src: location.heroImage, alt: location.title, title: location.title },
+    ...location.gallery.map((img, idx) => ({
+      id: String(idx + 1),
+      src: img,
+      alt: `${location.title} - Photo ${idx + 1}`,
+      title: `${location.title} - Photo ${idx + 1}`
+    }))
+  ];
 
   const handleCardClick = () => {
     navigate(`/location/${location.id}`);
@@ -429,7 +438,7 @@ const LocationCard = ({ location }: LocationCardProps) => {
         {/* Enhanced Image Carousel */}
         <div className="relative">
           <ImageCarousel
-            images={allImages}
+            images={galleryImages}
             currentIndex={currentImageIndex}
             onIndexChange={setCurrentImageIndex}
             onImageClick={handleImageClick}
@@ -536,7 +545,7 @@ const LocationCard = ({ location }: LocationCardProps) => {
             "group-hover:bg-black/80 group-hover:scale-105"
           )}>
             <Maximize2 className="h-3 w-3" />
-            {allImages.length} photos
+            {galleryImages.length} photos
           </div>
 
           {/* Rating badge (appears on hover) */}
@@ -717,10 +726,8 @@ const LocationCard = ({ location }: LocationCardProps) => {
       <ImageModal
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
-        images={allImages}
-        currentIndex={currentImageIndex}
-        onIndexChange={setCurrentImageIndex}
-        locationTitle={location.title}
+        images={modalImages}
+        initialIndex={currentImageIndex}
       />
     </>
   );

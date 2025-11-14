@@ -24,7 +24,7 @@ import { Badge } from './ui/badge'
 import { cn } from '@/lib/utils'
 
 // Types
-interface ImageData {
+export interface ImageData {
   id: string
   src: string
   alt: string

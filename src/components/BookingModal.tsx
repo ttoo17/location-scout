@@ -37,8 +37,8 @@ interface Location {
 }
 
 interface BookingDetails {
-  startDate: Date | null
-  endDate: Date | null
+  startDate: Date | undefined
+  endDate: Date | undefined
   crewSize: number
   contactName: string
   contactEmail: string
@@ -81,8 +81,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({})
   
   const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
-    startDate: null,
-    endDate: null,
+    startDate: undefined,
+    endDate: undefined,
     crewSize: 1,
     contactName: '',
     contactEmail: '',
@@ -161,7 +161,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
     // Check for unavailable dates in range
     if (bookingDetails.startDate && bookingDetails.endDate) {
-      const dateRange = []
+      const dateRange: Date[] = []
       let currentDate = new Date(bookingDetails.startDate)
       while (currentDate <= bookingDetails.endDate) {
         dateRange.push(new Date(currentDate))
@@ -213,8 +213,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
       setTimeout(() => {
         setStep('booking')
         setBookingDetails({
-          startDate: null,
-          endDate: null,
+          startDate: undefined,
+          endDate: undefined,
           crewSize: 1,
           contactName: '',
           contactEmail: '',

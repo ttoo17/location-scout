@@ -34,6 +34,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        default: "bg-primary text-primary-foreground shadow-sm hover:bg-amber-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm",
         primary: "bg-primary text-primary-foreground shadow-sm hover:bg-amber-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm",
         secondary: "bg-secondary text-secondary-foreground border border-border shadow-sm hover:bg-accent hover:text-accent-foreground hover:border-amber-300 hover:-translate-y-0.5 active:translate-y-0",
         ghost: "text-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-sm",

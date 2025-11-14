@@ -5,7 +5,7 @@ import { ArrowLeft, MapPin, Tag, MessageCircle, Heart, Share2, Star } from "luci
 import { mockLocations } from "../data/mockData";
 import BookingModal from "../components/BookingModal";
 import MessageModal from "../components/MessageModal";
-import ImageModal from "../components/ImageModal";
+import ImageModal, { type ImageData } from "../components/ImageModal";
 
 const ImageDetail = () => {
   const { locationId, imageIndex } = useParams();
@@ -34,8 +34,17 @@ const ImageDetail = () => {
     );
   }
 
-  const allImages = [location.heroImage, ...location.gallery];
-  const currentImage = allImages[imageIdx];
+  const galleryImages = [location.heroImage, ...location.gallery];
+  const modalImages: ImageData[] = [
+    { id: '0', src: location.heroImage, alt: location.title, title: location.title },
+    ...location.gallery.map((img, idx) => ({
+      id: String(idx + 1),
+      src: img,
+      alt: `${location.title} - Photo ${idx + 1}`,
+      title: `${location.title} - Photo ${idx + 1}`
+    }))
+  ];
+  const currentImage = galleryImages[imageIdx];
 
   // Mock image-specific data
   const imageData = {
@@ -51,7 +60,7 @@ const ImageDetail = () => {
     equipment: "Canon EOS R5, 24-70mm f/2.8"
   };
 
-  const relatedImages = allImages
+  const relatedImages = galleryImages
     .map((img, idx) => ({ image: img, index: idx }))
     .filter((_, idx) => idx !== imageIdx)
     .slice(0, 5);
@@ -256,10 +265,8 @@ const ImageDetail = () => {
       <ImageModal
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
-        images={allImages}
-        currentIndex={imageIdx}
-        onIndexChange={(index) => navigate(`/image/${location.id}/${index}`)}
-        locationTitle={location.title}
+        images={modalImages}
+        initialIndex={imageIdx}
       />
     </div>
   );

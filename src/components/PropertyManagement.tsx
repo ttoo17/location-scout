@@ -183,7 +183,7 @@ const PropertyManagement: React.FC<PropertyManagementProps> = ({
   const [editForm, setEditForm] = useState<Partial<Property>>({})
   const [tagInput, setTagInput] = useState('')
   const [amenityInput, setAmenityInput] = useState('')
-  const [availabilityDate, setAvailabilityDate] = useState<Date | null>(null)
+  const [availabilityDate, setAvailabilityDate] = useState<Date | undefined>(undefined)
   const [availabilityStatus, setAvailabilityStatus] = useState<'available' | 'booked' | 'blocked'>('available')
   const [availabilityPrice, setAvailabilityPrice] = useState('')
   const [availabilityNote, setAvailabilityNote] = useState('')
@@ -250,9 +250,9 @@ const PropertyManagement: React.FC<PropertyManagementProps> = ({
         !isSameDay(slot.date, availabilityDate)
       )
       updatedAvailability.push(newSlot)
-      
+
       updateEditForm({ availability: updatedAvailability })
-      setAvailabilityDate(null)
+      setAvailabilityDate(undefined)
       setAvailabilityPrice('')
       setAvailabilityNote('')
     }
@@ -819,7 +819,7 @@ const PropertyManagement: React.FC<PropertyManagementProps> = ({
           </CardHeader>
           <CardContent>
             <FileUpload
-              onFilesSelected={handleImageUpload}
+              onFilesChange={handleImageUpload}
               accept="image/*"
               multiple
               maxFiles={10}

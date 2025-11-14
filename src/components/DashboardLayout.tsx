@@ -456,7 +456,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <React.Fragment key={index}>
                   <BreadcrumbItem>
                     {crumb.href ? (
-                      <BreadcrumbLink 
+                      <BreadcrumbLink
+                        to={crumb.href}
                         onClick={() => crumb.href && handleNavigation(crumb.href)}
                         className="cursor-pointer"
                       >

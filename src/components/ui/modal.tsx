@@ -273,9 +273,8 @@ const Modal = React.forwardRef<
 
   return (
     <DialogPrimitive.Root
-      ref={ref}
       onOpenChange={handleOpenChange}
-      {...props}
+      {...(props as any)}
     />
   )
 })
